@@ -31,12 +31,15 @@ jobs:
 
       - name: Install dependencies
         run: |
+          cd src
           poetry install --no-root
 
       - name: Install pre-commit hooks
         run: |
+          cd src
           poetry run pre-commit install --install-hooks
 
       - name: Run pre-commit hooks
         run: |
+          cd src
           poetry run pre-commit run --all-files
