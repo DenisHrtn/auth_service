@@ -11,10 +11,7 @@ class IUnitOfWork(ABC):
         return self
 
     async def __aexit__(
-            self,
-            exc_type: type[BaseException] | None,
-            *args,
-            **kwargs
+        self, exc_type: type[BaseException] | None, *args, **kwargs
     ) -> None:
         if exc_type is not None:
             await self.rollback()
