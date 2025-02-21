@@ -1,6 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
-from src.app.app_layer.interfaces.unit_of_work.sql_base import IUnitOfWork
+from src.app.application.interfaces.unit_of_work.sql_base import IUnitOfWork
 
 
 class UnitOfWork(IUnitOfWork):

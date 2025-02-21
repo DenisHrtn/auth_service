@@ -2,6 +2,10 @@ from abc import ABC, abstractmethod
 
 
 class IUnitOfWork(ABC):
+    """
+    Интерфейс класса для Uow
+    """
+
     def __call__(self, auto_commit: bool, *args, **kwargs):
         self._auto_commit = auto_commit
 

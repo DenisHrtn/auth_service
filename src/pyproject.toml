@@ -15,7 +15,9 @@ dependencies = [
     "asyncpg (>=0.30.0,<0.31.0)",
     "dependency-injector (>=4.45.0,<5.0.0)",
     "uvicorn (>=0.34.0,<0.35.0)",
-    "pre-commit (>=4.1.0,<5.0.0)"
+    "pre-commit (>=4.1.0,<5.0.0)",
+    "orjson (>=3.10.15,<4.0.0)",
+    "redis (>=5.2.1,<6.0.0)"
 ]
 
 
