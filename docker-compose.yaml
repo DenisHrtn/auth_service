@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  fastapi:
+    build: .
+    command: /app/entrypoint.sh
+    env_file:
+      - .env
+    depends_on:
+      - redis
+      - db
+    ports:
+      - "8001:8000"
+    restart: always
+    container_name: fastapi
+    volumes:
+      - ./src:/app/src
+    networks:
+      - service_network
+    environment:
+      - PYTHONPATH=/app/src
+
+  redis:
+    image: redis:7.4.2
+    ports:
+      - "6380:6379"
+    container_name: redis_fastapi
+    networks:
+      - service_network
+
+  db:
+    image: postgres:15
+    env_file:
+      - .env
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "5433:5432"
+    networks:
+      - service_network
+
+networks:
+  service_network:
+    external: true
