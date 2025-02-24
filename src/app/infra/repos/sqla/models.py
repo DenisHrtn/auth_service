@@ -1,3 +1,4 @@
+import enum
 from datetime import datetime
 
 import sqlalchemy as sa
@@ -63,6 +64,14 @@ class Role(TimestampMixin, Base):
     )
 
 
+class TagChoices(enum.Enum):
+    CREATOR = "creator"
+    EDITOR = "editor"
+    VIEWER = "viewer"
+    DELETER = "deleter"
+    ADMIN = "admin"
+
+
 class Permission(TimestampMixin, Base):
     """
     Модель разрешений
@@ -78,4 +87,8 @@ class Permission(TimestampMixin, Base):
 
     description: Mapped[str] = mapped_column(sa.String(255), nullable=False)
 
-    # TODO: доделать tag choice для выбора типа роли (посмотреть уже готовые на Core)
+    tag: Mapped[TagChoices] = mapped_column(
+        sa.Enum(TagChoices, name="tag_choices"),
+        nullable=False,
+        default=TagChoices.VIEWER,
+    )
