@@ -6,6 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.domain.entities.user.dto import UserDTO
 from app.domain.entities.user.entity import User
 from app.domain.interfaces.users.user_repo import UserRepo
+from app.infra.celery.tasks import send_confirm_code_to_email
 from app.infra.repos.sqla.models import UserModel
 from app.infra.utils.generate_confirm_code import gen_code
 
@@ -40,6 +41,8 @@ class UserRepoImpl(UserRepo):
             is_blocked=user_model.is_blocked,
             date_joined=user_model.date_joined,
         )
+
+        send_confirm_code_to_email(to_address=user.email, code=user.code)
 
         return User(user_dto)
 

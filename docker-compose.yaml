@@ -59,6 +59,20 @@ services:
     networks:
       - service_network
 
+  localstack:
+    image: localstack/localstack:latest
+    environment:
+      - DOCKER_HOST=unix:///var/run/docker.sock
+    ports:
+      - "4566:4566"
+      - "4510-4559:4510-4559"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    container_name: localstack_auth
+    restart: always
+    networks:
+      - service_network
+
 networks:
   service_network:
     external: true
