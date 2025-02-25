@@ -41,7 +41,7 @@ RUN pip install --no-cache-dir --no-index --find-links=/wheels /wheels/* && rm -
 
 COPY alembic.ini ./
 COPY migrations /app/migrations
-COPY entrypoint.sh ./
+COPY entrypoint.sh entrypoint-celery.sh ./
 COPY src/pyproject.toml src/poetry.lock ./
 COPY src /app/src
 

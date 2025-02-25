@@ -27,8 +27,10 @@ services:
     container_name: redis_fastapi
     networks:
       - service_network
+    profiles:
+      - celery_auth
 
-  celery:
+  celery_auth:
     build: .
     command: /app/entrypoint-celery.sh
     env_file:
@@ -36,11 +38,13 @@ services:
     depends_on:
       - db
       - redis
-    container_name: celery
+    container_name: celery_auth
     profiles:
-      - celery
+      - celery_auth
     volumes:
       - ./src:/app/src
+    networks:
+      - service_network
 
   db:
     image: postgres:15
