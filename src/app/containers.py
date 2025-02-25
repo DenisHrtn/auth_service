@@ -1,3 +1,4 @@
+import redis
 from dependency_injector import containers, providers
 
 from app.application.interactors.register_user_interactor import RegisterUserInteractor
@@ -12,22 +13,22 @@ class DBContainer(containers.DeclarativeContainer):
     uow = providers.Factory(UnitOfWork, session_factory=db.provided.session_factory)
 
 
-# class RedisContainer(containers.DeclarativeContainer):
-#     config = providers.Dependency(instance_of=Config)
-#
-#     redis_client = providers.Singleton(
-#         redis.Redis,
-#         host=config.provided.REDIS_CONFIG.host,
-#         port=config.provided.REDIS_CONFIG.port,
-#         decode_responses=True,
-#     )
+class RedisContainer(containers.DeclarativeContainer):
+    config = providers.Dependency(instance_of=Config)
+
+    redis_client = providers.Singleton(
+        redis.Redis,
+        host=config.provided.REDIS_CONFIG.host,
+        port=config.provided.REDIS_CONFIG.port,
+        decode_responses=True,
+    )
 
 
 class Container(containers.DeclarativeContainer):
     config = providers.Dependency(instance_of=Config)
 
     db = providers.Container(DBContainer, config=config)
-    # redis = providers.Container(RedisContainer, config=config)
+    redis = providers.Container(RedisContainer, config=config)
 
     register_user_interactor = providers.Factory(RegisterUserInteractor, uow=db.uow)
 

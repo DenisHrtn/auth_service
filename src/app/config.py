@@ -15,19 +15,19 @@ class DBConfig(BaseSettings):
         extra = "allow"
 
 
-# class RedisConfig(BaseSettings):
-#     redis_host: str
-#     redis_port: int
-#
-#     class Config:
-#         env_file = ".env"
-#         env_nested_delimiter = "__"
-#         extra = "allow"
+class RedisConfig(BaseSettings):
+    host: str
+    port: int
+
+    class Config:
+        env_file = ".env"
+        env_nested_delimiter = "__"
+        extra = "allow"
 
 
 class Config(BaseSettings):
     DB_CONFIG: DBConfig
-    # REDIS_CONFIG: RedisConfig
+    REDIS_CONFIG: RedisConfig
 
     class Config:
         env_file = ".env"

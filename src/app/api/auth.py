@@ -1,16 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException
-from pydantic import BaseModel
 
 from app.application.interactors.register_user_interactor import RegisterUserInteractor
 from app.containers import container
+from app.infra.schemas.auth_schemas import RegisterRequest
 
 router = APIRouter()
-
-
-class RegisterRequest(BaseModel):
-    email: str
-    username: str
-    password: str
 
 
 @router.post("/register")

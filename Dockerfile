@@ -39,6 +39,8 @@ RUN pip install --no-cache-dir poetry
 COPY --from=builder /wheels /wheels
 RUN pip install --no-cache-dir --no-index --find-links=/wheels /wheels/* && rm -rf /wheels
 
+COPY alembic.ini ./
+COPY migrations /app/migrations
 COPY entrypoint.sh ./
 COPY src/pyproject.toml src/poetry.lock ./
 COPY src /app/src

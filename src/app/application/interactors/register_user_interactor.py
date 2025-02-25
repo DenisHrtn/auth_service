@@ -29,7 +29,7 @@ class RegisterUserInteractor(RegisterUser):
                 email=email, username=username, password=hashed_pass
             )
 
-            new_user.created_at = datetime.utcnow()
+            new_user.code_created_at = datetime.utcnow()
             new_user.is_active = True
             new_user.is_admin = False
 
