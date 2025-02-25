@@ -1,6 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
-from src.app.application.interfaces.unit_of_work.sql_base import IUnitOfWork
+from app.application.interfaces.unit_of_work.sql_base import IUnitOfWork
 
 
 class UnitOfWork(IUnitOfWork):
@@ -9,12 +9,16 @@ class UnitOfWork(IUnitOfWork):
     an asynchronous SQLAlchemy session.
     """
 
-    def __init__(self, session_factory: async_sessionmaker[AsyncSession]) -> None:
+    def __init__(
+        self,
+        session_factory: async_sessionmaker[AsyncSession],
+        auto_commit: bool = False,
+    ) -> None:
         self._session_factory = session_factory
+        self._auto_commit = auto_commit
 
     async def __aenter__(self) -> IUnitOfWork:
         self._session = self._session_factory()
-
         return await super().__aenter__()
 
     async def commit(self) -> None:

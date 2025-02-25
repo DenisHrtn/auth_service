@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import (
     create_async_engine,
 )
 
-from src.app.config import DBConfig
+from app.config import DBConfig
 
 
 class Database:

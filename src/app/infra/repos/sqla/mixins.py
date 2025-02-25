@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Annotated
 
 from sqlalchemy.orm import Mapped, declarative_mixin, mapped_column
@@ -12,5 +12,5 @@ class TimestampMixin:
 
     created_at: Mapped[timestamp]
     updated_at: Mapped[timestamp] = mapped_column(
-        onupdate=datetime.utcnow,
+        onupdate=datetime.now(tz=timezone.utc),
     )

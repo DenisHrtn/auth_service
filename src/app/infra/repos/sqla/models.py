@@ -6,12 +6,10 @@ from sqlalchemy import func
 from sqlalchemy.dialects.postgresql import ARRAY
 from sqlalchemy.orm import Mapped, mapped_column
 
-from src.app.infra.repos.sqla.base import Base
-
-from .mixins import TimestampMixin
+from app.infra.repos.sqla.base import Base
 
 
-class User(TimestampMixin, Base):
+class UserModel(Base):
     """
     Модель пользователей
     """
@@ -43,7 +41,7 @@ class User(TimestampMixin, Base):
     )
 
 
-class Role(TimestampMixin, Base):
+class Role(Base):
     """
     Модель ролей
     """
@@ -72,7 +70,7 @@ class TagChoices(enum.Enum):
     ADMIN = "admin"
 
 
-class Permission(TimestampMixin, Base):
+class Permission(Base):
     """
     Модель разрешений
     """

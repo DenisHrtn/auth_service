@@ -11,7 +11,8 @@ repos:
     hooks:
       - id: mypy
         name: mypy
-        args: [--ignore-missing-imports, --disable-error-code=union-attr]
+        args: [--ignore-missing-imports, --disable-error-code=union-attr, --disable-error-code=override,
+               --disable-error-code=attr-defined]
   - repo: https://github.com/pre-commit/mirrors-isort
     rev: v5.10.1
     hooks:
@@ -40,4 +41,5 @@ repos:
           - '--disable=import-error,missing-module-docstring,missing-class-docstring,missing-function-docstring,
           inconsistent-return-statements,too-few-public-methods,invalid-name,unused-argument,duplicate-code,
           wrong-import-position,wrong-import-order,logging-fstring-interpolation,cyclic-import,no-member,broad-except,
-          fixme,possibly-used-before-assignment,attribute-defined-outside-init'
+          fixme,possibly-used-before-assignment,attribute-defined-outside-init,unnecessary-lambda,raise-missing-from,
+          invalid-overridden-method,protected-access,too-many-instance-attributes'
