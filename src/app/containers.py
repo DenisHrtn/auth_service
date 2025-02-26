@@ -1,6 +1,9 @@
 import redis
 from dependency_injector import containers, providers
 
+from app.application.interactors.confirm_registration_interactor import (
+    ConfirmRegistrationInteractor,
+)
 from app.application.interactors.register_user_interactor import RegisterUserInteractor
 from app.config import Config
 from app.infra.repos.sqla.db import Database
@@ -31,6 +34,10 @@ class Container(containers.DeclarativeContainer):
     redis = providers.Container(RedisContainer, config=config)
 
     register_user_interactor = providers.Factory(RegisterUserInteractor, uow=db.uow)
+
+    confirm_registration_interactor = providers.Factory(
+        ConfirmRegistrationInteractor, uow=db.uow
+    )
 
 
 container = Container()

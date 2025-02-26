@@ -85,10 +85,10 @@ class User:
             email=email,
             username=username,
             hashed_password=password,
-            code=123456,  # или генерируйте уникальный код
+            code=123456,
             code_created_at=datetime.utcnow(),
             is_admin=False,
-            is_active=False,  # можно выставить True, если хотите активировать сразу
+            is_active=False,
             is_blocked=False,
             date_joined=datetime.utcnow(),
         )

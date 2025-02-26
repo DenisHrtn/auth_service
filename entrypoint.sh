@@ -8,6 +8,7 @@ echo "PostgreSQL запущен, стартуем FastAPI!"
 
 echo "Создаем миграции..."
 cd /app
+alembic revision --autogenerate -m "Initial migration"
 alembic upgrade head
 cd src
 

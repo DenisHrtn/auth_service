@@ -7,7 +7,6 @@ class DBConfig(BaseSettings):
     postgres_password: str
     postgres_host: str
     postgres_port: int
-    schema_name: str
 
     class Config:
         env_file = ".env"

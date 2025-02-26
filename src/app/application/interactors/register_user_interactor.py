@@ -30,7 +30,7 @@ class RegisterUserInteractor(RegisterUser):
             )
 
             new_user.code_created_at = datetime.utcnow()
-            new_user.is_active = True
+            new_user.is_active = False
             new_user.is_admin = False
 
             registered_user = await user_repo.register(new_user)

@@ -46,24 +46,24 @@ class UserRepoImpl(UserRepo):
 
         return User(user_dto)
 
-    async def get_user_by_email(self, email: str) -> Optional[User]:
-        result = await self.session.execute(select(UserModel).filter_by(email=email))
+    async def get_user_by_email(self, email: str) -> Optional[UserModel]:
+        result = await self.session.execute(
+            select(UserModel).filter((UserModel.email) == email)
+        )
         user_model = result.scalars().first()
+
         if not user_model:
             return None
-        user_dto = UserDTO(
-            id=user_model.id,
-            email=user_model.email,
-            username=user_model.username,
-            hashed_password=user_model.hashed_password,
-            code=user_model.code,
-            code_created_at=user_model.code_created_at,
-            is_admin=user_model.is_admin,
-            is_active=user_model.is_active,
-            is_blocked=user_model.is_blocked,
-            date_joined=user_model.date_joined,
-        )
-        return User(user_dto)
+
+        return user_model
+
+    async def update_user(self, user_model: UserModel, **kwargs):
+        for key, value in kwargs.items():
+            setattr(user_model, key, value)
+
+        self.session.add(user_model)
+        await self.session.commit()
+        await self.session.refresh(user_model)
 
     async def login(self, username: str, password: str) -> User:
         # заглушка

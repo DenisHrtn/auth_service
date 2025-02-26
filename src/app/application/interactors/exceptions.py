@@ -4,3 +4,7 @@ class BaseInteractorException(Exception):
 
 class UserExistsException(BaseInteractorException):
     pass
+
+
+class InvalidCodeException(BaseInteractorException):
+    pass
