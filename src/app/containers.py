@@ -4,6 +4,7 @@ from dependency_injector import containers, providers
 from app.application.interactors.confirm_registration_interactor import (
     ConfirmRegistrationInteractor,
 )
+from app.application.interactors.login_interactor import LoginInteractor
 from app.application.interactors.register_user_interactor import RegisterUserInteractor
 from app.application.interactors.send_code_again_intreractor import (
     SendCodeAgainInteractor,
@@ -43,6 +44,8 @@ class Container(containers.DeclarativeContainer):
     )
 
     send_code_again_interactor = providers.Factory(SendCodeAgainInteractor, uow=db.uow)
+
+    login_interactor = providers.Factory(LoginInteractor, uow=db.uow)
 
 
 container = Container()

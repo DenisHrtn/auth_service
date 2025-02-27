@@ -7,8 +7,11 @@ from app.domain.entities.user.dto import UserDTO
 from app.domain.entities.user.entity import User
 from app.domain.interfaces.users.user_repo import UserRepo
 from app.infra.celery.tasks import send_confirm_code_to_email
-from app.infra.repos.sqla.models import UserModel
+from app.infra.repos.sqla.models import Role, UserModel
+from app.infra.repos.users.exceptions import InvalidPassword
+from app.infra.security.password_hasher import verify_password
 from app.infra.utils.generate_confirm_code import gen_code
+from app.infra.utils.generate_tokens import create_access_token, create_refresh_token
 
 
 class UserRepoImpl(UserRepo):
@@ -81,9 +84,21 @@ class UserRepoImpl(UserRepo):
 
         return "Code has been sent"
 
-    async def login(self, username: str, password: str) -> User:
-        # заглушка
-        raise NotImplementedError("Метод login ещё не реализован")
+    async def login(self, email: str, password: str) -> dict:
+        user = await self.get_user_by_email(email)
+
+        result = await self.session.execute(
+            select(Role.role_name).where(Role.user_id == user.id)
+        )
+        role_name = result.scalars().first()
+
+        if not verify_password(password, user.hashed_password):
+            raise InvalidPassword("Пароли не совпадают")
+
+        access_token = create_access_token(user.id, user.email, role_name)
+        refresh_token = create_refresh_token(user.id, user.email, role_name)
+
+        return {"access_token": access_token, "refresh_token": refresh_token}
 
     async def logout(self) -> None:
         # заглушка

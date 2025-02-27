@@ -3,6 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from app.application.interactors.confirm_registration_interactor import (
     ConfirmRegistrationInteractor,
 )
+from app.application.interactors.login_interactor import LoginInteractor
 from app.application.interactors.register_user_interactor import RegisterUserInteractor
 from app.application.interactors.send_code_again_intreractor import (
     SendCodeAgainInteractor,
@@ -10,6 +11,7 @@ from app.application.interactors.send_code_again_intreractor import (
 from app.containers import container
 from app.infra.schemas.auth_schemas import (
     ConfirmRegistrationRequest,
+    LoginRequest,
     RegisterRequest,
     SendCodeAgainRequest,
 )
@@ -61,5 +63,19 @@ async def send_code_again(
             request.email
         )
         return {"message": f"User sent code again, email: {new_updated_user}"}
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@router.post("/login")
+async def login(
+    request: LoginRequest,
+    login_interactor: LoginInteractor = Depends(lambda: container.login_interactor()),
+):
+    try:
+        result = await login_interactor.execute(
+            email=request.email, password=request.password
+        )
+        return result
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))

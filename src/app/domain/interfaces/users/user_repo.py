@@ -9,7 +9,7 @@ class UserRepo(ABC):
         pass
 
     @abstractmethod
-    def login(self, username: str, password: str) -> User:
+    def login(self, email: str, password: str) -> dict:
         pass
 
     @abstractmethod
