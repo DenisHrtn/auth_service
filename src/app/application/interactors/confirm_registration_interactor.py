@@ -2,12 +2,12 @@ from app.application.interactors.exceptions import (
     InvalidCodeException,
     UserExistsException,
 )
-from app.application.use_cases.confirm_registration import ConfirmRegistration
+from app.application.use_cases.confirm_registration import ConfirmRegistrationUseCase
 from app.infra.repos.users.user_repo_impl import UserRepoImpl
 from app.infra.unit_of_work.async_sql import UnitOfWork
 
 
-class ConfirmRegistrationInteractor(ConfirmRegistration):
+class ConfirmRegistrationInteractor(ConfirmRegistrationUseCase):
     def __init__(self, uow: UnitOfWork):
         self.uow = uow
 

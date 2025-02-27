@@ -23,3 +23,7 @@ class UserRepo(ABC):
     @abstractmethod
     def update_user(self, email: str, code: int) -> None:
         pass
+
+    @abstractmethod
+    def send_code_again(self, email: str) -> str:
+        pass

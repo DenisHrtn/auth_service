@@ -5,6 +5,9 @@ from app.application.interactors.confirm_registration_interactor import (
     ConfirmRegistrationInteractor,
 )
 from app.application.interactors.register_user_interactor import RegisterUserInteractor
+from app.application.interactors.send_code_again_intreractor import (
+    SendCodeAgainInteractor,
+)
 from app.config import Config
 from app.infra.repos.sqla.db import Database
 from app.infra.unit_of_work.async_sql import UnitOfWork
@@ -38,6 +41,8 @@ class Container(containers.DeclarativeContainer):
     confirm_registration_interactor = providers.Factory(
         ConfirmRegistrationInteractor, uow=db.uow
     )
+
+    send_code_again_interactor = providers.Factory(SendCodeAgainInteractor, uow=db.uow)
 
 
 container = Container()

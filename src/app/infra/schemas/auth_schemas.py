@@ -10,3 +10,7 @@ class RegisterRequest(BaseModel):
 class ConfirmRegistrationRequest(BaseModel):
     email: str
     code: int
+
+
+class SendCodeAgainRequest(BaseModel):
+    email: str

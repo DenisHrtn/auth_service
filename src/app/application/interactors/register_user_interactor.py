@@ -1,14 +1,14 @@
 from datetime import datetime
 
 from app.application.interactors.exceptions import UserExistsException
-from app.application.use_cases.register_user import RegisterUser
+from app.application.use_cases.register_user import RegisterUserUseCase
 from app.domain.entities.user.entity import User
 from app.infra.repos.users.user_repo_impl import UserRepoImpl
 from app.infra.security.password_hasher import hash_password
 from app.infra.unit_of_work.async_sql import UnitOfWork
 
 
-class RegisterUserInteractor(RegisterUser):
+class RegisterUserInteractor(RegisterUserUseCase):
     def __init__(self, uow: UnitOfWork):
         """
         Инжектим Unit of Work, из которого потом создаём репозиторий.

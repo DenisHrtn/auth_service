@@ -8,3 +8,11 @@ class UserExistsException(BaseInteractorException):
 
 class InvalidCodeException(BaseInteractorException):
     pass
+
+
+class UserNotFoundException(BaseInteractorException):
+    pass
+
+
+class UserAlreadyActiveException(BaseInteractorException):
+    pass

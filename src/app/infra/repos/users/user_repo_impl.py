@@ -61,9 +61,25 @@ class UserRepoImpl(UserRepo):
         for key, value in kwargs.items():
             setattr(user_model, key, value)
 
-        self.session.add(user_model)
         await self.session.commit()
         await self.session.refresh(user_model)
+
+    async def send_code_again(self, email: str) -> str:
+        user = await self.session.execute(
+            select(UserModel).filter(UserModel.email == email)
+        )
+        user_model = user.scalars().first()
+
+        if not user_model:
+            return "None"
+
+        user_model.code = gen_code()
+
+        await self.update_user(user_model, code=user_model.code)
+
+        send_confirm_code_to_email(to_address=user_model.email, code=user_model.code)
+
+        return "Code has been sent"
 
     async def login(self, username: str, password: str) -> User:
         # заглушка
