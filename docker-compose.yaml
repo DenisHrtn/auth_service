@@ -82,8 +82,7 @@ services:
     environment:
       - DOCKER_HOST=unix:///var/run/docker.sock
     ports:
-      - "4566:4566"
-      - "4510-4559:4510-4559"
+      - "4568:4568"
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
     container_name: localstack_auth

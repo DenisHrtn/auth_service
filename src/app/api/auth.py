@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi.security import OAuth2PasswordRequestForm
 
 from app.application.interactors.confirm_registration_interactor import (
     ConfirmRegistrationInteractor,
@@ -11,12 +12,12 @@ from app.application.interactors.send_code_again_intreractor import (
 from app.containers import container
 from app.infra.schemas.auth_schemas import (
     ConfirmRegistrationRequest,
-    LoginRequest,
     RegisterRequest,
     SendCodeAgainRequest,
 )
+from app.infra.security.get_current_user import get_current_user
 
-router = APIRouter()
+router = APIRouter(tags=["auth"])
 
 
 @router.post("/register")
@@ -69,13 +70,18 @@ async def send_code_again(
 
 @router.post("/login")
 async def login(
-    request: LoginRequest,
+    form_data: OAuth2PasswordRequestForm = Depends(),
     login_interactor: LoginInteractor = Depends(lambda: container.login_interactor()),
 ):
     try:
         result = await login_interactor.execute(
-            email=request.email, password=request.password
+            email=form_data.username, password=form_data.password  # <-- исправлено
         )
         return result
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
+
+
+@router.get("/protected-route")
+async def protected_route(user_id: str = Depends(get_current_user)):
+    return {"message": "You are authenticated!", "user_id": user_id}

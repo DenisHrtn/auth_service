@@ -28,9 +28,21 @@ class UserRepoImpl(UserRepo):
             code_created_at=user.code_created_at,
             code=gen_code(),
         )
+
         self.session.add(user_model)
         await self.session.commit()
         await self.session.refresh(user_model)
+
+        role_model = Role(
+            role_name=user_model.username,
+            description="",
+            permissions=[1],
+            user_id=user_model.id,
+        )
+
+        self.session.add(role_model)
+        await self.session.commit()
+        await self.session.refresh(role_model)
 
         user_dto = UserDTO(
             id=user_model.id,

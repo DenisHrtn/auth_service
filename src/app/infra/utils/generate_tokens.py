@@ -19,7 +19,7 @@ def create_jwt_token(data: dict, expired_data: timedelta) -> str:
 
     to_encode = data.copy()
     expire = datetime.utcnow() + expired_data
-    to_encode.update({"exp": expire})
+    to_encode.update({"exp": int(expire.timestamp())})
 
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
