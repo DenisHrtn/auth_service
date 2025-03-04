@@ -1,5 +1,4 @@
 from fastapi import APIRouter, Depends, HTTPException
-from fastapi.security import OAuth2PasswordRequestForm
 
 from app.application.interactors.confirm_registration_interactor import (
     ConfirmRegistrationInteractor,
@@ -9,9 +8,11 @@ from app.application.interactors.register_user_interactor import RegisterUserInt
 from app.application.interactors.send_code_again_intreractor import (
     SendCodeAgainInteractor,
 )
+from app.application.use_cases.register.dto import RegisterUserDTO
 from app.containers import container
 from app.infra.schemas.auth_schemas import (
     ConfirmRegistrationRequest,
+    LoginRequest,
     RegisterRequest,
     SendCodeAgainRequest,
 )
@@ -28,9 +29,10 @@ async def register_user(
     ),
 ):
     try:
-        new_user = await register_user_interactor.execute(
-            request.email, request.username, request.password
+        dto = RegisterUserDTO(
+            email=request.email, username=request.username, password=request.password
         )
+        new_user = await register_user_interactor.execute(dto)
         return {"message": "User registered successfully", "user_id": new_user.id}
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
@@ -70,12 +72,12 @@ async def send_code_again(
 
 @router.post("/login")
 async def login(
-    form_data: OAuth2PasswordRequestForm = Depends(),
+    request: LoginRequest,
     login_interactor: LoginInteractor = Depends(lambda: container.login_interactor()),
 ):
     try:
         result = await login_interactor.execute(
-            email=form_data.username, password=form_data.password  # <-- исправлено
+            email=request.username, password=request.password
         )
         return result
     except ValueError as e:

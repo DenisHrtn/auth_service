@@ -11,6 +11,7 @@ from app.application.interactors.send_code_again_intreractor import (
 )
 from app.config import Config
 from app.infra.repos.sqla.db import Database
+from app.infra.services.celery_email_sender import CeleryEmailSender
 from app.infra.unit_of_work.async_sql import UnitOfWork
 
 
@@ -37,7 +38,11 @@ class Container(containers.DeclarativeContainer):
     db = providers.Container(DBContainer, config=config)
     redis = providers.Container(RedisContainer, config=config)
 
-    register_user_interactor = providers.Factory(RegisterUserInteractor, uow=db.uow)
+    email_sender = providers.Singleton(CeleryEmailSender)
+
+    register_user_interactor = providers.Factory(
+        RegisterUserInteractor, uow=db.uow, email_sender=email_sender
+    )
 
     confirm_registration_interactor = providers.Factory(
         ConfirmRegistrationInteractor, uow=db.uow

@@ -10,7 +10,7 @@ class TimestampMixin:
         datetime, mapped_column(nullable=False, default=datetime.utcnow)
     ]
 
-    created_at: Mapped[timestamp]
+    created_at: Mapped[timestamp]  # TODO: заполняется автоматически через бд
     updated_at: Mapped[timestamp] = mapped_column(
-        onupdate=datetime.now(tz=timezone.utc),
+        onupdate=datetime.now(tz=timezone.utc),  # автоматически через бд
     )

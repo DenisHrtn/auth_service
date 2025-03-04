@@ -1,7 +1,8 @@
 import re
+from dataclasses import dataclass
 from datetime import datetime, timedelta
+from typing import Self
 
-from app.domain.entities.user.dto import UserDTO
 from app.domain.entities.user.exceptions import (
     InvalidUserEmailException,
     InvalidUserPasswordException,
@@ -9,125 +10,72 @@ from app.domain.entities.user.exceptions import (
 )
 
 
+@dataclass
 class User:
     """
     Базовая реализация пользователя
     """
 
-    def __init__(self, data: UserDTO) -> None:
-        self.id = data.id
-        self.email = data.email
-        self.username = data.username
-        self.hashed_password = data.hashed_password
-        self.code = data.code
-        self.code_created_at = data.code_created_at
-        self.is_admin = data.is_admin
-        self.is_active = data.is_active
-        self.is_blocked = data.is_blocked
-        self.date_joined = data.date_joined
+    id: int
+    email: str
+    username: str
+    hashed_password: str
+    code: int
+    code_created_at: datetime
+    is_admin: bool
+    is_active: bool
+    is_blocked: bool
+    date_joined: datetime
+
+    def __post_init__(self):
+        self.code_created_at = datetime.now()
+        self.date_joined = datetime.now()
+        self.is_active = False
+        self.is_blocked = False
+        self.is_admin = False
 
     @staticmethod
     def validate_password(password: str) -> bool:
-        """
-        Проверка сложности пароля
-        """
-
-        if len(password) < 8:
-            return False
-        if not re.search(r"\d", password):
-            return False
-        if not re.search(r"[A-Z]", password):
-            return False
-        return True
+        """Проверка сложности пароля"""
+        return (
+            len(password) >= 8
+            and bool(re.search(r"\d", password))
+            and bool(re.search(r"[A-Z]", password))
+        )
 
     @staticmethod
     def validate_email(email: str) -> bool:
-        """
-        Проверка валидности email
-        """
-
-        if not re.search(r"[^@]+@[^@]+\.[^@]+", email):
-            return False
-        return True
+        """Проверка валидности email"""
+        return bool(re.match(r"[^@]+@[^@]+\.[^@]+", email))
 
     @staticmethod
     def validate_username(username: str) -> bool:
-        """
-        Проверка валидности username
-        """
-
-        if len(username) < 3:
-            return False
-        return True
+        """Проверка валидности username"""
+        return len(username) >= 3
 
     @classmethod
-    def register(
-        cls,
-        email: str,
-        username: str,
-        password: str,
-    ) -> "User":
-        """
-        Метод регистрации пользователя
-        """
-
+    def register(cls, email: str, username: str, password: str) -> Self:
+        """Метод регистрации пользователя"""
         if not cls.validate_password(password):
             raise InvalidUserPasswordException("Invalid password")
-
         if not cls.validate_email(email):
             raise InvalidUserEmailException("Invalid email")
-
         if not cls.validate_username(username):
             raise InvalidUserUsernameException("Invalid username")
 
-        user_dto = UserDTO(
+        return cls(
             id=0,
             email=email,
             username=username,
             hashed_password=password,
             code=123456,
-            code_created_at=datetime.utcnow(),
+            code_created_at=datetime.now(),
             is_admin=False,
             is_active=False,
             is_blocked=False,
-            date_joined=datetime.utcnow(),
+            date_joined=datetime.now(),
         )
-        return cls(user_dto)
-
-    def activate(self) -> None:
-        """
-        Активация пользователя
-        """
-
-        self.is_active = True
-
-    def deactivate(self) -> None:
-        """
-        Деактивация пользователя
-        """
-
-        self.is_active = False
-
-    def block(self) -> None:
-        """
-        Блокировка пользователя
-        """
-
-        self.is_blocked = True
-        self.is_active = False
-
-    def unblock(self) -> None:
-        """
-        Разблокировка пользователя
-        """
-
-        self.is_blocked = False
-        self.is_active = True
 
     def is_password_expired(self, max_age_days: int) -> bool:
-        """
-        Проверка, истек ли срок действия пароля
-        """
-        if self.code_created_at < datetime.utcnow() - timedelta(days=max_age_days):
-            return True
-        return False
+        """Проверка, истек ли срок действия пароля"""
+        return self.code_created_at < datetime.now() - timedelta(days=max_age_days)

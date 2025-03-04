@@ -1,14 +1,14 @@
 import logging
 
-from celery import shared_task
-
 from app.infra.services.email_service import send_email_via_ses
 from app.infra.services.exceptions import SendMessageError
+
+from .celery_app import app
 
 logger = logging.getLogger(__name__)
 
 
-@shared_task
+@app.task
 def send_confirm_code_to_email(to_address: str, code: int) -> None:
     """
     Таска для отправки кода подтверждения на почту при регистрации

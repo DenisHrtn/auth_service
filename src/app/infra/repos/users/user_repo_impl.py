@@ -3,8 +3,8 @@ from typing import Optional
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.application.use_cases.register.dto import RegisterUserDTO
 from app.domain.entities.user.dto import UserDTO
-from app.domain.entities.user.entity import User
 from app.domain.interfaces.users.user_repo import UserRepo
 from app.infra.celery.tasks import send_confirm_code_to_email
 from app.infra.repos.sqla.models import Role, UserModel
@@ -18,20 +18,16 @@ class UserRepoImpl(UserRepo):
     def __init__(self, session: AsyncSession):
         self.session = session
 
-    async def register(self, user: User) -> User:
+    async def register(self, dto: RegisterUserDTO) -> UserDTO:
         user_model = UserModel(
-            email=user.email,
-            username=user.username,
-            hashed_password=user.hashed_password,
-            is_active=user.is_active,
-            is_admin=user.is_admin,
-            code_created_at=user.code_created_at,
+            email=dto.email,
+            username=dto.username,
+            hashed_password=dto.password,
             code=gen_code(),
         )
 
         self.session.add(user_model)
-        await self.session.commit()
-        await self.session.refresh(user_model)
+        await self.session.flush()
 
         role_model = Role(
             role_name=user_model.username,
@@ -41,8 +37,7 @@ class UserRepoImpl(UserRepo):
         )
 
         self.session.add(role_model)
-        await self.session.commit()
-        await self.session.refresh(role_model)
+        await self.session.flush()
 
         user_dto = UserDTO(
             id=user_model.id,
@@ -57,9 +52,7 @@ class UserRepoImpl(UserRepo):
             date_joined=user_model.date_joined,
         )
 
-        send_confirm_code_to_email(to_address=user.email, code=user.code)
-
-        return User(user_dto)
+        return user_dto
 
     async def get_user_by_email(self, email: str) -> Optional[UserModel]:
         result = await self.session.execute(

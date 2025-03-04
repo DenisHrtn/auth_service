@@ -1,11 +1,13 @@
 from abc import ABC, abstractmethod
 
+from app.application.use_cases.register.dto import RegisterUserDTO
+from app.domain.entities.user.dto import UserDTO
 from app.domain.entities.user.entity import User
 
 
 class UserRepo(ABC):
     @abstractmethod
-    def register(self, user: User) -> User:
+    def register(self, dto: RegisterUserDTO) -> UserDTO:
         pass
 
     @abstractmethod

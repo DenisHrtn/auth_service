@@ -27,7 +27,9 @@ class UserModel(Base):
     code: Mapped[int] = mapped_column(sa.Integer, nullable=False, unique=True)
 
     code_created_at: Mapped[datetime] = mapped_column(
-        sa.DateTime, nullable=False, default=func.now()
+        sa.DateTime,
+        nullable=False,
+        default=func.now(),  # TODO: на уровне бд (server_default)
     )
 
     is_admin: Mapped[bool] = mapped_column(sa.Boolean, default=False, nullable=False)
