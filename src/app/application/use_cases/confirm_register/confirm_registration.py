@@ -1,7 +1,9 @@
 from abc import ABC, abstractmethod
 
+from .dto import ConfirmRegisterDTO
+
 
 class ConfirmRegistrationUseCase(ABC):
     @abstractmethod
-    def confirm(self, email: str, code: int) -> None:  # TODO: передавать DTO-класс
+    def confirm(self, dto: ConfirmRegisterDTO) -> None:
         pass

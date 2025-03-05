@@ -4,12 +4,12 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.application.use_cases.register.dto import RegisterUserDTO
+from app.application.use_cases.send_code_again.dto import SendCodeAgainOutputDTO
 from app.domain.entities.user.dto import UserDTO
 from app.domain.interfaces.users.user_repo import UserRepo
-from app.infra.celery.tasks import send_confirm_code_to_email
 from app.infra.repos.sqla.models import Role, UserModel
 from app.infra.repos.users.exceptions import InvalidPassword
-from app.infra.security.password_hasher import verify_password
+from app.infra.security.hash_password import verify_password
 from app.infra.utils.generate_confirm_code import gen_code
 from app.infra.utils.generate_tokens import create_access_token, create_refresh_token
 
@@ -24,6 +24,7 @@ class UserRepoImpl(UserRepo):
             username=dto.username,
             hashed_password=dto.password,
             code=gen_code(),
+            is_active=False,
         )
 
         self.session.add(user_model)
@@ -69,23 +70,18 @@ class UserRepoImpl(UserRepo):
         for key, value in kwargs.items():
             setattr(user_model, key, value)
 
-        await self.session.commit()
         await self.session.refresh(user_model)
 
-    async def send_code_again(self, email: str) -> str:
+    async def send_code_again(self, dto: SendCodeAgainOutputDTO) -> str:
         user = await self.session.execute(
-            select(UserModel).filter(UserModel.email == email)
+            select(UserModel).filter(UserModel.email == dto.email)
         )
         user_model = user.scalars().first()
 
         if not user_model:
             return "None"
 
-        user_model.code = gen_code()
-
-        await self.update_user(user_model, code=user_model.code)
-
-        send_confirm_code_to_email(to_address=user_model.email, code=user_model.code)
+        await self.update_user(user_model, code=dto.code)
 
         return "Code has been sent"
 

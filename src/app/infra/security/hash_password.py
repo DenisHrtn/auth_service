@@ -6,8 +6,6 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 def hash_password(password: str) -> str:
     """
     Метод для хеширования пароля
-    :param password: str
-    :return: hashed password
     """
 
     return pwd_context.hash(password)

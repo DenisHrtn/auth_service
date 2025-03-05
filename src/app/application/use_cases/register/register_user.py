@@ -6,5 +6,5 @@ from app.domain.entities.user.dto import UserDTO
 
 class RegisterUserUseCase(ABC):
     @abstractmethod
-    def execute(self, dto: RegisterUserDTO) -> UserDTO:
+    def execute(self, register_dto: RegisterUserDTO) -> UserDTO:
         pass

@@ -1,5 +1,7 @@
 from abc import ABC, abstractmethod
 
+from .dto import SendCodeAgainDTO, SendCodeAgainOutputDTO
+
 
 class SendCodeAgainUseCase(ABC):
     """
@@ -7,5 +9,5 @@ class SendCodeAgainUseCase(ABC):
     """
 
     @abstractmethod
-    def send_code_again(self, email: str) -> None:  # TODO: передавать DTO-класс
+    def send_code_again(self, dto: SendCodeAgainDTO) -> SendCodeAgainOutputDTO:
         pass

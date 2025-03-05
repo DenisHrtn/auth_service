@@ -18,14 +18,14 @@ class UnitOfWork(IUnitOfWork):
         self._auto_commit = auto_commit
 
     async def __aenter__(self) -> IUnitOfWork:
-        self._session = self._session_factory()
+        self.session = self._session_factory()
         return await super().__aenter__()
 
     async def commit(self) -> None:
-        await self._session.commit()
+        await self.session.commit()
 
     async def rollback(self) -> None:
-        await self._session.rollback()
+        await self.session.rollback()
 
     async def close(self) -> None:
-        await self._session.close()
+        await self.session.close()
