@@ -9,7 +9,7 @@ class LoginInteractor(LoginUseCase):
 
     async def execute(self, email: str, password: str):
         async with self.uow as unit:
-            user_repo = UserRepoImpl(unit._session)
+            user_repo = UserRepoImpl(unit.session)
 
             login_user = await user_repo.login(email, password)
 

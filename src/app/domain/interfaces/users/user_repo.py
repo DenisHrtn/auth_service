@@ -1,8 +1,7 @@
 from abc import ABC, abstractmethod
 
-from app.application.use_cases.register.dto import RegisterUserDTO
 from app.application.use_cases.send_code_again.dto import SendCodeAgainOutputDTO
-from app.domain.entities.user.dto import UserDTO
+from app.domain.entities.user.dto import RegisterUserDTO, UserDTO
 from app.domain.entities.user.entity import User
 
 

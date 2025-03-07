@@ -9,6 +9,8 @@ from app.domain.entities.user.exceptions import (
     InvalidUserUsernameException,
 )
 
+from .dto import RegisterUserDTO
+
 
 @dataclass
 class User:
@@ -54,20 +56,20 @@ class User:
         return len(username) >= 3
 
     @classmethod
-    def register(cls, email: str, username: str, password: str) -> Self:
+    def register(cls, dto: RegisterUserDTO) -> Self:
         """Метод регистрации пользователя"""
-        if not cls.validate_password(password):
+        if not cls.validate_password(dto.password):
             raise InvalidUserPasswordException("Invalid password")
-        if not cls.validate_email(email):
+        if not cls.validate_email(dto.email):
             raise InvalidUserEmailException("Invalid email")
-        if not cls.validate_username(username):
+        if not cls.validate_username(dto.username):
             raise InvalidUserUsernameException("Invalid username")
 
         return cls(
             id=0,
-            email=email,
-            username=username,
-            hashed_password=password,
+            email=dto.email,
+            username=dto.username,
+            hashed_password=dto.password,
             code=123456,
             code_created_at=datetime.now(),
             is_admin=False,

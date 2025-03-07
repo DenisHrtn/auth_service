@@ -75,7 +75,7 @@ async def login(
 ):
     try:
         result = await login_interactor.execute(
-            email=request.username, password=request.password
+            email=request.email, password=request.password
         )
         return result
     except ValueError as e:

@@ -14,3 +14,10 @@ class UserDTO:
     is_active: bool
     is_blocked: bool
     date_joined: datetime
+
+
+@dataclass
+class RegisterUserDTO:
+    email: str
+    username: str
+    password: str

@@ -8,6 +8,9 @@ from app.application.interactors.login_interactor import LoginInteractor
 from app.application.interactors.register.register_user_interactor import (
     RegisterUserInteractor,
 )
+from app.application.interactors.roles.create_role_interactor import (
+    CreateRoleInteractor,
+)
 from app.application.interactors.send_code_again.send_code_again_intreractor import (
     SendCodeAgainInteractor,
 )
@@ -15,6 +18,7 @@ from app.config import Config
 from app.infra.repos.sqla.db import Database
 from app.infra.services.celery_email_sender import CeleryEmailSender
 from app.infra.services.confirm_code import ConfirmCodeService
+from app.infra.services.jwt_auth_service import JWTAuthService
 from app.infra.services.password_hasher import PasswordHasher
 from app.infra.unit_of_work.async_sql import UnitOfWork
 
@@ -36,11 +40,19 @@ class RedisContainer(containers.DeclarativeContainer):
     )
 
 
+class AuthContainer(containers.DeclarativeContainer):
+    config = providers.Dependency(instance_of=Config)
+    redis = providers.Dependency(instance_of=redis.Redis)
+
+    auth_service = providers.Factory(JWTAuthService, redis_client=redis)
+
+
 class Container(containers.DeclarativeContainer):
     config = providers.Dependency(instance_of=Config)
 
     db = providers.Container(DBContainer, config=config)
     redis = providers.Container(RedisContainer, config=config)
+    auth = providers.Container(AuthContainer, config=config, redis=redis.redis_client)
 
     code_service = providers.Singleton(ConfirmCodeService)
 
@@ -65,6 +77,8 @@ class Container(containers.DeclarativeContainer):
         email_sender=email_sender,
         code_service=code_service,
     )
+
+    create_role_interactor = providers.Factory(CreateRoleInteractor, uow=db.uow)
 
     login_interactor = providers.Factory(LoginInteractor, uow=db.uow)
 
