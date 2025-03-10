@@ -15,10 +15,10 @@ from app.application.use_cases.register.dto import RegisterUserDTO
 from app.application.use_cases.send_code_again.dto import SendCodeAgainDTO
 from app.containers import container
 from app.infra.schemas.auth_schemas import (
-    ConfirmRegistrationRequest,
-    LoginRequest,
-    RegisterRequest,
-    SendCodeAgainRequest,
+    ConfirmRegistrationRequestSchema,
+    LoginRequestSchema,
+    RegisterRequestSchema,
+    SendCodeAgainRequestSchema,
 )
 from app.infra.security.get_current_user import get_current_user
 
@@ -27,13 +27,13 @@ router = APIRouter(tags=["auth"])
 
 @router.post("/register")
 async def register_user(
-    request: RegisterRequest,
+    schema: RegisterRequestSchema,
     register_user_interactor: RegisterUserInteractor = Depends(
         lambda: container.register_user_interactor()
     ),
 ):
     dto = RegisterUserDTO(
-        email=request.email, username=request.username, password=request.password
+        email=schema.email, username=schema.username, password=schema.password
     )
     new_user = await register_user_interactor.execute(dto)
     return {"message": "User registered successfully", "user_id": new_user.id}
@@ -41,7 +41,7 @@ async def register_user(
 
 @router.patch("/confirm-registration")
 async def confirm_registration(
-    request: ConfirmRegistrationRequest,
+    request: ConfirmRegistrationRequestSchema,
     confirm_registration_interactor: ConfirmRegistrationInteractor = Depends(
         lambda: container.confirm_registration_interactor()
     ),
@@ -54,7 +54,7 @@ async def confirm_registration(
 
 @router.patch("/send-code-again")
 async def send_code_again(
-    request: SendCodeAgainRequest,
+    request: SendCodeAgainRequestSchema,
     send_code_again_interactor: SendCodeAgainInteractor = Depends(
         lambda: container.send_code_again_interactor()
     ),
@@ -70,7 +70,7 @@ async def send_code_again(
 
 @router.post("/login")
 async def login(
-    request: LoginRequest,
+    request: LoginRequestSchema,
     login_interactor: LoginInteractor = Depends(lambda: container.login_interactor()),
 ):
     try:

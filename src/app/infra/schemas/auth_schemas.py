@@ -1,27 +1,27 @@
 from pydantic import BaseModel
 
 
-class RegisterRequest(BaseModel):
+class RegisterRequestSchema(BaseModel):
     email: str
     username: str
     password: str
 
 
-class ConfirmRegistrationRequest(BaseModel):
+class ConfirmRegistrationRequestSchema(BaseModel):
     email: str
     code: int
 
 
-class SendCodeAgainRequest(BaseModel):
+class SendCodeAgainRequestSchema(BaseModel):
     email: str
 
 
-class LoginRequest(BaseModel):
+class LoginRequestSchema(BaseModel):
     email: str
     password: str
 
 
-class TokenResponse(BaseModel):
+class TokenResponseSchema(BaseModel):
     access_token: str
     refresh_token: str
     token_type: str = "bearer"

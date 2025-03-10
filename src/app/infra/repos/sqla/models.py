@@ -2,9 +2,9 @@ import enum
 from datetime import datetime
 
 import sqlalchemy as sa
-from sqlalchemy import func
+from sqlalchemy import text
 from sqlalchemy.dialects.postgresql import ARRAY
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.infra.repos.sqla.base import Base
 
@@ -27,9 +27,7 @@ class UserModel(Base):
     code: Mapped[int] = mapped_column(sa.Integer, nullable=False, unique=True)
 
     code_created_at: Mapped[datetime] = mapped_column(
-        sa.DateTime,
-        nullable=False,
-        default=func.now(),  # TODO: на уровне бд (server_default)
+        sa.DateTime, nullable=False, server_default=text("CURRENT_TIMESTAMP")
     )
 
     is_admin: Mapped[bool] = mapped_column(sa.Boolean, default=False, nullable=False)
@@ -39,7 +37,7 @@ class UserModel(Base):
     is_blocked: Mapped[bool] = mapped_column(sa.Boolean, default=False, nullable=False)
 
     date_joined: Mapped[datetime] = mapped_column(
-        sa.DateTime, nullable=False, default=func.now()
+        sa.DateTime, nullable=False, default=text("CURRENT_TIMESTAMP")
     )
 
 
@@ -62,6 +60,8 @@ class Role(Base):
         sa.ForeignKey("users.id", name="role_user_id_fkey", ondelete="CASCADE"),
         nullable=False,
     )
+
+    user = relationship("UserModel", backref="roles", lazy="joined")
 
 
 class TagChoices(enum.Enum):

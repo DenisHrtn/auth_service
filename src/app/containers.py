@@ -13,6 +13,7 @@ from app.application.interactors.send_code_again.send_code_again_intreractor imp
 )
 from app.config import Config
 from app.infra.repos.sqla.db import Database
+from app.infra.repos.users.user_repo_impl import UserRepoImpl
 from app.infra.services.celery_email_sender import CeleryEmailSender
 from app.infra.services.confirm_code import ConfirmCodeService
 from app.infra.services.password_hasher import PasswordHasher
@@ -48,11 +49,14 @@ class Container(containers.DeclarativeContainer):
 
     email_sender = providers.Singleton(CeleryEmailSender)
 
+    user_repo = providers.Singleton(UserRepoImpl, session=db.uow.provided.session)
+
     register_user_interactor = providers.Factory(
         RegisterUserInteractor,
         uow=db.uow,
         email_sender=email_sender,
         password_hasher=password_hasher,
+        user_repo=user_repo,
     )
 
     confirm_registration_interactor = providers.Factory(

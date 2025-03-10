@@ -16,7 +16,7 @@ from app.infra.utils.generate_tokens import create_access_token, create_refresh_
 
 class UserRepoImpl(UserRepo):
     def __init__(self, session: AsyncSession):
-        self.session = session
+        super().__init__(session)
 
     async def register(self, dto: RegisterUserDTO) -> UserDTO:
         user_model = UserModel(
@@ -70,7 +70,7 @@ class UserRepoImpl(UserRepo):
         for key, value in kwargs.items():
             setattr(user_model, key, value)
 
-        await self.session.refresh(user_model)
+        await self.session.flush(user_model)
 
     async def send_code_again(self, dto: SendCodeAgainOutputDTO) -> str:
         user = await self.session.execute(

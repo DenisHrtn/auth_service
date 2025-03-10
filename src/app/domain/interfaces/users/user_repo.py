@@ -7,26 +7,29 @@ from app.domain.entities.user.entity import User
 
 
 class UserRepo(ABC):
+    def __init__(self, session):
+        self.session = session
+
     @abstractmethod
-    def register(self, dto: RegisterUserDTO) -> UserDTO:
+    async def register(self, dto: RegisterUserDTO) -> UserDTO:
         pass
 
     @abstractmethod
-    def login(self, email: str, password: str) -> dict:
+    async def login(self, email: str, password: str) -> dict:
         pass
 
     @abstractmethod
-    def logout(self) -> None:
+    async def logout(self) -> None:
         pass
 
     @abstractmethod
-    def get_user_by_email(self, email: str) -> User:
+    async def get_user_by_email(self, email: str) -> User:
         pass
 
     @abstractmethod
-    def update_user(self, email: str, code: int) -> None:
+    async def update_user(self, email: str, code: int) -> None:
         pass
 
     @abstractmethod
-    def send_code_again(self, dto: SendCodeAgainOutputDTO) -> str:
+    async def send_code_again(self, dto: SendCodeAgainOutputDTO) -> str:
         pass

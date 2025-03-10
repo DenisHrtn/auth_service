@@ -38,7 +38,16 @@ class SendCodeAgainInteractor(SendCodeAgainUseCase):
 
             code = self.code_service.confirm_code()
 
-            email_dto = SendEMailDTO(dto.email, code)
+            email_dto = SendEMailDTO(
+                dto.email,
+                body=(
+                    f"Здравствуйте!\n\n"
+                    f"Повторный код для подтверждения!.\n\n"
+                    f"Ваш уникальный код подтверждения: **{code}**\n\n"
+                    f"С уважением,\nКоманда проекта"
+                ),
+                code=code,
+            )
 
             await self.email_sender.send_email(email_dto)
 
