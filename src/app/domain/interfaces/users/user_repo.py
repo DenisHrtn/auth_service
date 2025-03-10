@@ -1,31 +1,36 @@
 from abc import ABC, abstractmethod
 
+from app.application.interfaces.unit_of_work.sql_base import IUnitOfWork
+from app.application.use_cases.register.dto import RegisterUserDTO
 from app.application.use_cases.send_code_again.dto import SendCodeAgainOutputDTO
-from app.domain.entities.user.dto import RegisterUserDTO, UserDTO
+from app.domain.entities.user.dto import UserDTO
 from app.domain.entities.user.entity import User
 
 
 class UserRepo(ABC):
+    def __init__(self, uow: IUnitOfWork):
+        self.uow = uow
+
     @abstractmethod
-    def register(self, dto: RegisterUserDTO) -> UserDTO:
+    async def register(self, dto: RegisterUserDTO) -> UserDTO:
         pass
 
     @abstractmethod
-    def login(self, email: str, password: str) -> dict:
+    async def login(self, email: str, password: str) -> dict:
         pass
 
     @abstractmethod
-    def logout(self) -> None:
+    async def logout(self) -> None:
         pass
 
     @abstractmethod
-    def get_user_by_email(self, email: str) -> User:
+    async def get_user_by_email(self, email: str) -> User:
         pass
 
     @abstractmethod
-    def update_user(self, email: str, code: int) -> None:
+    async def update_user(self, user_model, **kwargs) -> None:
         pass
 
     @abstractmethod
-    def send_code_again(self, dto: SendCodeAgainOutputDTO) -> str:
+    async def send_code_again(self, dto: SendCodeAgainOutputDTO) -> str:
         pass

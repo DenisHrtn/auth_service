@@ -5,4 +5,4 @@ from app.infra.celery.tasks import send_confirm_code_to_email
 
 class CeleryEmailSender(IEmailService):
     async def send_email(self, dto: SendEMailDTO):
-        send_confirm_code_to_email.delay(dto.to_address, dto.code)
+        send_confirm_code_to_email.delay(dto.to_address, dto.body, dto.code)

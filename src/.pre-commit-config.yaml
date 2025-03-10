@@ -44,5 +44,6 @@ repos:
           inconsistent-return-statements,too-few-public-methods,invalid-name,unused-argument,duplicate-code,
           wrong-import-position,wrong-import-order,logging-fstring-interpolation,cyclic-import,no-member,broad-except,
           fixme,possibly-used-before-assignment,attribute-defined-outside-init,unnecessary-lambda,raise-missing-from,
+          invalid-overridden-method,protected-access,too-many-instance-attributes,arguments-differ,useless-parent-delegation
           invalid-overridden-method,protected-access,too-many-instance-attributes,arguments-differ,invalid-envvar-default,
           redefined-outer-name'
