@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 
+from app.application.interfaces.unit_of_work.sql_base import IUnitOfWork
 from app.application.use_cases.register.dto import RegisterUserDTO
 from app.application.use_cases.send_code_again.dto import SendCodeAgainOutputDTO
 from app.domain.entities.user.dto import UserDTO
@@ -7,8 +8,8 @@ from app.domain.entities.user.entity import User
 
 
 class UserRepo(ABC):
-    def __init__(self, session):
-        self.session = session
+    def __init__(self, uow: IUnitOfWork):
+        self.uow = uow
 
     @abstractmethod
     async def register(self, dto: RegisterUserDTO) -> UserDTO:
@@ -27,7 +28,7 @@ class UserRepo(ABC):
         pass
 
     @abstractmethod
-    async def update_user(self, email: str, code: int) -> None:
+    async def update_user(self, user_model, **kwargs) -> None:
         pass
 
     @abstractmethod

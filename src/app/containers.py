@@ -49,7 +49,7 @@ class Container(containers.DeclarativeContainer):
 
     email_sender = providers.Singleton(CeleryEmailSender)
 
-    user_repo = providers.Singleton(UserRepoImpl, session=db.uow.provided.session)
+    user_repo = providers.Singleton(UserRepoImpl, uow=db.uow)
 
     register_user_interactor = providers.Factory(
         RegisterUserInteractor,
@@ -60,7 +60,10 @@ class Container(containers.DeclarativeContainer):
     )
 
     confirm_registration_interactor = providers.Factory(
-        ConfirmRegistrationInteractor, uow=db.uow, code_service=code_service
+        ConfirmRegistrationInteractor,
+        uow=db.uow,
+        code_service=code_service,
+        user_repo=user_repo,
     )
 
     send_code_again_interactor = providers.Factory(
@@ -68,9 +71,12 @@ class Container(containers.DeclarativeContainer):
         uow=db.uow,
         email_sender=email_sender,
         code_service=code_service,
+        user_repo=user_repo,
     )
 
-    login_interactor = providers.Factory(LoginInteractor, uow=db.uow)
+    login_interactor = providers.Factory(
+        LoginInteractor, uow=db.uow, user_repo=user_repo
+    )
 
 
 container = Container()

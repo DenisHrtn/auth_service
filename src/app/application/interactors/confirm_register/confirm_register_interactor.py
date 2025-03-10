@@ -9,29 +9,29 @@ from app.application.use_cases.confirm_register.confirm_registration import (
     ConfirmRegistrationUseCase,
 )
 from app.application.use_cases.confirm_register.dto import ConfirmRegisterDTO
-from app.infra.repos.users.user_repo_impl import UserRepoImpl
+from app.domain.interfaces.users.user_repo import UserRepo
 
 
 class ConfirmRegistrationInteractor(ConfirmRegistrationUseCase):
-    def __init__(self, uow: IUnitOfWork, code_service: IConfirmCode):
+    def __init__(
+        self, uow: IUnitOfWork, code_service: IConfirmCode, user_repo: UserRepo
+    ):
         self.uow = uow
         self.code_service = code_service
+        self.user_repo = user_repo
 
     async def confirm(self, dto: ConfirmRegisterDTO) -> str:
-        async with self.uow(auto_commit=True) as unit:
-            user_repo = UserRepoImpl(unit.session)
+        existing_user = await self.user_repo.get_user_by_email(dto.email)
 
-            existing_user = await user_repo.get_user_by_email(dto.email)
+        if not existing_user:
+            raise UserExistsException("Пользователь с таким email не существует")
 
-            if not existing_user:
-                raise UserExistsException("Пользователь с таким email не существует")
+        if existing_user.is_active:
+            raise UserAlreadyActiveException("Пользователь уже зарегистрирован!")
 
-            if existing_user.is_active:
-                raise UserAlreadyActiveException("Пользователь уже зарегистрирован!")
+        if existing_user.code != dto.code:
+            raise InvalidCodeException("Неверный код подтверждения")
 
-            if existing_user.code != dto.code:
-                raise InvalidCodeException("Неверный код подтверждения")
+        await self.user_repo.update_user(user_model=existing_user, is_active=True)
 
-            await user_repo.update_user(user_model=existing_user, is_active=True)
-
-            return "Successfully!"
+        return "Successfully!"

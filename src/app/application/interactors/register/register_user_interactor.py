@@ -27,33 +27,32 @@ class RegisterUserInteractor(RegisterUserUseCase):
         self.user_repo = user_repo
 
     async def execute(self, register_dto: RegisterUserDTO) -> UserDTO:
-        async with self.uow(auto_commit=True):  # noqa
-            existing_user = await self.user_repo.get_user_by_email(register_dto.email)
-            if existing_user is not None:
-                raise UserExistsException("Пользователь с таким email уже существует")
+        existing_user = await self.user_repo.get_user_by_email(register_dto.email)
+        if existing_user is not None:
+            raise UserExistsException("Пользователь с таким email уже существует")
 
-            pass_dto = PasswordHashDTO(register_dto.password)
+        pass_dto = PasswordHashDTO(register_dto.password)
 
-            hashed_pass = self.password_hasher.hash_password(pass_dto)
+        hashed_pass = self.password_hasher.hash_password(pass_dto)
 
-            new_user = RegisterUserDTO(
-                email=register_dto.email,
-                username=register_dto.username,
-                password=hashed_pass,
-            )
+        new_user = RegisterUserDTO(
+            email=register_dto.email,
+            username=register_dto.username,
+            password=hashed_pass,
+        )
 
-            registered_user = await self.user_repo.register(new_user)
+        registered_user = await self.user_repo.register(new_user)
 
-            email_dto = SendEMailDTO(
-                to_address=registered_user.email,
-                body=(
-                    f"Здравствуйте!\n\n"
-                    f"Вы успешно прошли регистрацию!.\n\n"
-                    f"Ваш уникальный код подтверждения: **{registered_user.code}**\n\n"
-                    f"С уважением,\nКоманда проекта"
-                ),
-                code=registered_user.code,
-            )
-            await self.email_sender.send_email(email_dto)
+        email_dto = SendEMailDTO(
+            to_address=registered_user.email,
+            body=(
+                f"Здравствуйте!\n\n"
+                f"Вы успешно прошли регистрацию!.\n\n"
+                f"Ваш уникальный код подтверждения: **{registered_user.code}**\n\n"
+                f"С уважением,\nКоманда проекта"
+            ),
+            code=registered_user.code,
+        )
+        await self.email_sender.send_email(email_dto)
 
-            return registered_user
+        return registered_user
