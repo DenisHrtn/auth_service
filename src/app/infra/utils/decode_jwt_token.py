@@ -2,10 +2,8 @@ import os
 
 import jwt
 from dotenv import load_dotenv
-from fastapi import Depends, HTTPException, Request
+from fastapi import HTTPException, Request
 from starlette.status import HTTP_401_UNAUTHORIZED
-
-from app.infra.security.get_current_user import get_current_user
 
 load_dotenv()
 
@@ -41,9 +39,3 @@ def decode_jwt_token(request: Request):
         ) from exc
 
     return payload.get("user_id"), payload.get("role_name"), payload.get("email")
-
-
-def is_admin(user: dict = Depends(get_current_user)):
-    if user.get("role_name") != "admin":
-        raise HTTPException(status_code=HTTP_401_UNAUTHORIZED, detail="Доступ запрещен")
-    return user

@@ -3,7 +3,7 @@ from typing import Optional
 from sqlalchemy import exists, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.domain.entities.role.dto import RoleCreatedDTO, RoleDTO
+from app.domain.entities.role.dto import RoleDTO
 from app.domain.interfaces.roles.role_repo import RoleRepo
 from app.infra.repos.sqla.models import Role
 
@@ -12,30 +12,9 @@ class RoleRepoImpl(RoleRepo):
     def __init__(self, session: AsyncSession):
         self.session = session
 
-    async def create(self, dto: RoleCreatedDTO) -> RoleDTO:
-        role_model = Role(
-            role_name=dto.role_name,
-            description=dto.description,
-            permissions=dto.permissions,
-            user_id=dto.user_id,
-        )
-
-        self.session.add(role_model)
-        await self.session.flush()
-
-        role_dto = RoleDTO(
-            id=role_model.id,
-            role_name=role_model.role_name,
-            description=role_model.description,
-            permissions=role_model.permissions,
-            user_id=role_model.user_id,
-        )
-
-        return role_dto
-
     async def get_by_name(self, role_name: str) -> Optional[Role]:
         result = await self.session.execute(
-            select(Role).filter((Role.role_name == role_name) == role_name)
+            select(Role).filter(Role.role_name == role_name)
         )
         role_model = result.scalars().first()
 
@@ -50,13 +29,10 @@ class RoleRepoImpl(RoleRepo):
         )
         exists_ = result.scalar()
 
-        if exists_:
+        if not exists_:
             return False
 
         return True
 
     async def update_role(self, role_id: int, role: RoleDTO) -> RoleDTO:
-        return "Not Implemented"
-
-    async def delete_role(self, role_id: int) -> RoleDTO:
         return "Not Implemented"

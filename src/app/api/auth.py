@@ -20,7 +20,6 @@ from app.infra.schemas.auth_schemas import (
     RegisterRequestSchema,
     SendCodeAgainRequestSchema,
 )
-from app.infra.security.get_current_user import get_current_user
 
 router = APIRouter(tags=["auth"])
 
@@ -80,8 +79,3 @@ async def login(
         return result
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
-
-
-@router.get("/protected-route")
-async def protected_route(user_id: str = Depends(get_current_user)):
-    return {"message": "You are authenticated!", "user_id": user_id}

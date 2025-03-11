@@ -18,6 +18,5 @@ container.wire(modules=["app.api.auth"])
 app = FastAPI()
 app.container = container
 
-
 app.include_router(auth_router, prefix="/api/v1/auth")
 app.include_router(roles_router, prefix="/api/v1/roles")

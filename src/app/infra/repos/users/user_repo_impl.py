@@ -32,7 +32,7 @@ class UserRepoImpl(UserRepo):
             role_model = Role(
                 role_name=user_model.username,
                 description="",
-                permissions=[1],
+                permissions=[2],
                 user_id=user_model.id,
             )
 

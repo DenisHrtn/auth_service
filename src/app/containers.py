@@ -8,9 +8,6 @@ from app.application.interactors.login.login_interactor import LoginInteractor
 from app.application.interactors.register.register_user_interactor import (
     RegisterUserInteractor,
 )
-from app.application.interactors.roles.create_role_interactor import (
-    CreateRoleInteractor,
-)
 from app.application.interactors.send_code_again.send_code_again_intreractor import (
     SendCodeAgainInteractor,
 )
@@ -88,8 +85,6 @@ class Container(containers.DeclarativeContainer):
         code_service=code_service,
         user_repo=user_repo,
     )
-
-    create_role_interactor = providers.Factory(CreateRoleInteractor, uow=db.uow)
 
     login_interactor = providers.Factory(
         LoginInteractor,

@@ -8,11 +8,3 @@ class RoleDTO:
     description: str
     permissions: list[int]
     user_id: int
-
-
-@dataclass
-class RoleCreatedDTO:
-    role_name: str
-    description: str
-    permissions: list[int] | None
-    user_id: int
