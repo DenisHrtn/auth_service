@@ -11,7 +11,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
 
 async def get_current_user(
     token: str = Depends(oauth2_scheme),
-    redis_client=Depends(lambda: container.redis.redis_client()),
+    redis_client=Depends(lambda: container.redis.redis_cl()),
 ):
     if not token:
         raise HTTPException(status_code=401, detail="Not authenticated")

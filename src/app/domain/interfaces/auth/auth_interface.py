@@ -4,12 +4,7 @@ from typing import Optional
 
 class IAuthInterface(ABC):
     @abstractmethod
-    async def generate_token(
-        self,
-        user_id: int,
-        role_name: str,
-        email: str,
-    ) -> str:
+    async def put_token_in_redis(self, token: str) -> str:
         pass
 
     @abstractmethod

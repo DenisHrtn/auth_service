@@ -16,7 +16,7 @@ class UserRepo(ABC):
         pass
 
     @abstractmethod
-    async def login(self, email: str, password: str) -> dict:
+    async def login(self, email: str, password: str):
         pass
 
     @abstractmethod

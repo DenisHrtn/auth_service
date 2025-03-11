@@ -8,10 +8,7 @@ from app.application.use_cases.send_code_again.dto import SendCodeAgainOutputDTO
 from app.domain.entities.user.dto import UserDTO
 from app.domain.interfaces.users.user_repo import UserRepo
 from app.infra.repos.sqla.models import Role, UserModel
-from app.infra.repos.users.exceptions import InvalidPassword
-from app.infra.security.hash_password import verify_password
 from app.infra.utils.generate_confirm_code import gen_code
-from app.infra.utils.generate_tokens import create_access_token, create_refresh_token
 
 
 class UserRepoImpl(UserRepo):
@@ -108,13 +105,7 @@ class UserRepoImpl(UserRepo):
             )
             role_name = result.scalars().first()
 
-            if not verify_password(password, user.hashed_password):
-                raise InvalidPassword("Пароли не совпадают")
-
-            access_token = create_access_token(user.id, user.email, role_name)
-            refresh_token = create_refresh_token(user.id, user.email, role_name)
-
-            return {"access_token": access_token, "refresh_token": refresh_token}
+            return role_name
 
     async def logout(self) -> None:
         # заглушка

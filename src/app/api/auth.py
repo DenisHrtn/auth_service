@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from app.application.interactors.confirm_register.confirm_register_interactor import (
     ConfirmRegistrationInteractor,
 )
-from app.application.interactors.login_interactor import LoginInteractor
+from app.application.interactors.login.login_interactor import LoginInteractor
 from app.application.interactors.register.register_user_interactor import (
     RegisterUserInteractor,
 )

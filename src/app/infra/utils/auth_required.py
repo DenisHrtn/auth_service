@@ -6,17 +6,15 @@ from fastapi import HTTPException, Request
 from app.containers import container
 from app.infra.services.jwt_auth_service import JWTAuthService
 
-jwt_auth = JWTAuthService(redis_client=redis.Redis)
+jwt_auth = JWTAuthService(redis_cl=redis.Redis)
 
 
 def auth_required(func):
     @wraps(func)
     async def wrapper(request: Request, *args, **kwargs):
-        # Получаем токен внутри wrapper
-        token = await get_token(request)  # Важно: получаем токен прямо здесь
+        token = await get_token(request)
         print(f"Token received in wrapper: {token} (type: {type(token)})")
 
-        # Здесь мы передаём строку токена в validate_token
         auth_service = container.auth.auth_service()
         await auth_service.validate_token(token)
 

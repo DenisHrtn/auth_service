@@ -1,13 +1,16 @@
+import logging
 import os
-from datetime import datetime, timedelta
+from datetime import timedelta
 from typing import Optional
 
 import jwt
-import redis
+import redis.asyncio as redis
 from dotenv import load_dotenv
 from fastapi import HTTPException
 
 from app.domain.interfaces.auth.auth_interface import IAuthInterface
+
+logger = logging.getLogger(__name__)
 
 load_dotenv()
 
@@ -22,50 +25,40 @@ redis_client = redis.Redis(
 
 
 class JWTAuthService(IAuthInterface):
-    def __init__(self, redis_client: redis.Redis) -> None:
-        self.secret_key = AUTH_SECRET_KEY
-        self.expiry_minutes = TOKEN_EXPIRY_MINUTES
-        self.redis_client = redis_client
+    def __init__(self, redis_cl: redis.Redis) -> None:
+        self.redis_cl = redis_cl
 
-    async def generate_token(
-        self,
-        user_id: int,
-        role_name: str,
-        email: str,
-    ) -> bytes:
-        payload = {
-            "user_id": user_id,
-            "role_name": role_name,
-            "email": email,
-            "exp": datetime.now() + timedelta(minutes=self.expiry_minutes),
-        }
+    async def put_token_in_redis(self, token: str) -> str:
+        expiry_time = timedelta(minutes=TOKEN_EXPIRY_MINUTES).total_seconds()
 
-        token = jwt.encode(payload, self.secret_key, algorithm="HS256")
+        result = self.redis_cl.setex(f"token:{token}", int(expiry_time), "active")
 
-        await self.redis_client.setex(
-            f"token:{token}", timedelta(minutes=self.expiry_minutes), "active"
-        )
-
-        return token
+        return f"Токен успешно записан в Redis! {result}"
 
     async def validate_token(self, token: bytes) -> Optional[dict]:
-        print(f"Token before decoding: {token} (type: {type(token)})")
-
         try:
-            payload = jwt.decode(token, self.secret_key, algorithms=["HS256"])
-            print(f"Decoded payload: {payload}")
+            payload = jwt.decode(token, AUTH_SECRET_KEY, algorithms=["HS256"])
+            logger.info(f"Decoded payload: {payload}")
         except jwt.ExpiredSignatureError:
-            print("Token expired")
             raise HTTPException(status_code=401, detail="Token expired")
-        except jwt.InvalidTokenError as e:
-            print(f"Invalid token error: {e}")
-            raise HTTPException(status_code=401, detail="evrevre token")
+        except jwt.InvalidTokenError:
+            raise HTTPException(status_code=401, detail="Invalid token")
 
-        # if not self.redis_client.exists(f'token:{token}'):
-        #     print("Token not found in Redis")
-        #     raise HTTPException(status_code=401, detail="Ivvre")
+        if not self.redis_cl.exists(f"token:{token}"):
+            logger.warning("Token not found in Redis")
+            raise HTTPException(status_code=401, detail="Invalid token")
+
+        key = f"token:{token}"
+        ttl = self.redis_cl.ttl(key)
+
+        if ttl == -2:
+            return {"detail": "Token expired"}
+        if ttl > 0:
+            status = self.redis_cl.get(key)
+            return status
 
         return payload
 
     async def deactivate_token(self, token: str) -> None:
-        await self.redis_client.delete(f"token:{token}")
+        await self.redis_cl.delete(f"token:{token}")
+        logger.info(f"Токен {token} был успешно удален из Redis!")

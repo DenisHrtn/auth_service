@@ -4,7 +4,7 @@ from dependency_injector import containers, providers
 from app.application.interactors.confirm_register.confirm_register_interactor import (
     ConfirmRegistrationInteractor,
 )
-from app.application.interactors.login_interactor import LoginInteractor
+from app.application.interactors.login.login_interactor import LoginInteractor
 from app.application.interactors.register.register_user_interactor import (
     RegisterUserInteractor,
 )
@@ -20,6 +20,7 @@ from app.infra.repos.users.user_repo_impl import UserRepoImpl
 from app.infra.services.celery_email_sender import CeleryEmailSender
 from app.infra.services.confirm_code import ConfirmCodeService
 from app.infra.services.jwt_auth_service import JWTAuthService
+from app.infra.services.login_service import LoginService
 from app.infra.services.password_hasher import PasswordHasher
 from app.infra.unit_of_work.async_sql import UnitOfWork
 
@@ -43,9 +44,9 @@ class RedisContainer(containers.DeclarativeContainer):
 
 class AuthContainer(containers.DeclarativeContainer):
     config = providers.Dependency(instance_of=Config)
-    redis = providers.Dependency(instance_of=redis.Redis)
+    redis = providers.DependenciesContainer()
 
-    auth_service = providers.Factory(JWTAuthService, redis_client=redis)
+    auth_service = providers.Factory(JWTAuthService, redis_cl=redis.redis_client)
 
 
 class Container(containers.DeclarativeContainer):
@@ -53,7 +54,9 @@ class Container(containers.DeclarativeContainer):
 
     db = providers.Container(DBContainer, config=config)
     redis = providers.Container(RedisContainer, config=config)
-    auth = providers.Container(AuthContainer, config=config, redis=redis.redis_client)
+    auth = providers.Container(AuthContainer, config=config, redis=redis)
+
+    login_service = providers.Singleton(LoginService)
 
     code_service = providers.Singleton(ConfirmCodeService)
 
@@ -89,7 +92,11 @@ class Container(containers.DeclarativeContainer):
     create_role_interactor = providers.Factory(CreateRoleInteractor, uow=db.uow)
 
     login_interactor = providers.Factory(
-        LoginInteractor, uow=db.uow, user_repo=user_repo
+        LoginInteractor,
+        uow=db.uow,
+        user_repo=user_repo,
+        jwt_auth_service=auth.auth_service,
+        login_inter=login_service,
     )
 
 
