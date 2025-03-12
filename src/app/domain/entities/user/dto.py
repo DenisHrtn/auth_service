@@ -17,6 +17,16 @@ class UserDTO:
 
 
 @dataclass
+class UserResponseDTO:
+    email: str
+    username: str
+    is_admin: bool
+    is_active: bool
+    is_blocked: bool
+    date_joined: datetime
+
+
+@dataclass
 class RegisterUserDTO:
     email: str
     username: str

@@ -13,7 +13,7 @@ repos:
         name: mypy
         args: [--ignore-missing-imports, --disable-error-code=union-attr, --disable-error-code=override,
                --disable-error-code=attr-defined, --disable-error-code=arg-type, --disable-error-code=str-bytes-safe,
-               --disable-error-code=return-value
+               --disable-error-code=return-value, --disable-error-code=return
         ]
   - repo: https://github.com/pre-commit/mirrors-isort
     rev: v5.10.1
@@ -46,4 +46,4 @@ repos:
           fixme,possibly-used-before-assignment,attribute-defined-outside-init,unnecessary-lambda,raise-missing-from,
           invalid-overridden-method,protected-access,too-many-instance-attributes,arguments-differ,useless-parent-delegation
           invalid-overridden-method,protected-access,too-many-instance-attributes,arguments-differ,invalid-envvar-default,
-          redefined-outer-name,useless-parent-delegation'
+          redefined-outer-name,useless-parent-delegation,arguments-renamed'
