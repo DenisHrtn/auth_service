@@ -5,6 +5,9 @@ from app.application.interactors.confirm_register.confirm_register_interactor im
     ConfirmRegistrationInteractor,
 )
 from app.application.interactors.login.login_interactor import LoginInteractor
+from app.application.interactors.permissions.get_all_perms_interactor import (
+    GetAllPermissionsInteractor,
+)
 from app.application.interactors.register.register_user_interactor import (
     RegisterUserInteractor,
 )
@@ -16,6 +19,7 @@ from app.application.interactors.send_code_again.send_code_again_intreractor imp
     SendCodeAgainInteractor,
 )
 from app.config import Config
+from app.infra.repos.permissions.permissions_repo_impl import PermissionsRepoImpl
 from app.infra.repos.roles.role_repo_impl import RoleRepoImpl
 from app.infra.repos.sqla.db import Database
 from app.infra.repos.users.user_repo_impl import UserRepoImpl
@@ -73,6 +77,8 @@ class Container(containers.DeclarativeContainer):
 
     decode_service = providers.Singleton(DecodeJWTToken)
 
+    permissions_repo = providers.Singleton(PermissionsRepoImpl, uow=db.uow)
+
     register_user_interactor = providers.Factory(
         RegisterUserInteractor,
         uow=db.uow,
@@ -116,6 +122,13 @@ class Container(containers.DeclarativeContainer):
         uow=db.uow,
         role_repo=role_repo,
         decode_service=decode_service,
+    )
+
+    get_all_permissions_interactor = providers.Factory(
+        GetAllPermissionsInteractor,
+        uow=db.uow,
+        decode_service=decode_service,
+        permissions_repo=permissions_repo,
     )
 
 
