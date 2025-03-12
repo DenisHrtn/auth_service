@@ -5,5 +5,5 @@ from app.domain.entities.role.dto import RoleDTO
 
 class UpdateRoleUseCase(ABC):
     @abstractmethod
-    async def execute(self, role: RoleDTO) -> RoleDTO:
+    async def execute(self, token: str, role: RoleDTO) -> str:
         pass

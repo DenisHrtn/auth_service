@@ -11,6 +11,7 @@ from app.application.interactors.register.register_user_interactor import (
 from app.application.interactors.roles.gel_all_roles_interactor import (
     GetAllRolesInteractor,
 )
+from app.application.interactors.roles.update_role import UpdateRoleInteractor
 from app.application.interactors.send_code_again.send_code_again_intreractor import (
     SendCodeAgainInteractor,
 )
@@ -105,6 +106,13 @@ class Container(containers.DeclarativeContainer):
 
     get_all_roles_interactor = providers.Factory(
         GetAllRolesInteractor,
+        uow=db.uow,
+        role_repo=role_repo,
+        decode_service=decode_service,
+    )
+
+    update_role_interactor = providers.Factory(
+        UpdateRoleInteractor,
         uow=db.uow,
         role_repo=role_repo,
         decode_service=decode_service,
