@@ -1,4 +1,4 @@
-from sqlalchemy import exists, select
+from sqlalchemy import select
 
 from app.application.interfaces.unit_of_work.sql_base import IUnitOfWork
 from app.domain.interfaces.permissions.permissions_repo import PermissionsRepo
@@ -33,11 +33,11 @@ class PermissionsRepoImpl(PermissionsRepo):
 
             return "Successfully updated permission"
 
-    async def get_permission_by_name(self, permission_name: str):
+    async def get_permission_by_id(self, permission_id: int):
         async with self.uow(auto_commit=True) as unit:
             session_ = unit.session
             result = await session_.execute(
-                select(exists().where(Permission.permission_name == permission_name))
+                select(Permission).filter(Permission.id == permission_id)
             )
             permission_model = result.scalars().first()
 

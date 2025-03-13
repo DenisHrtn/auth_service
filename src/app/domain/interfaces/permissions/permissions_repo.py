@@ -8,7 +8,7 @@ class PermissionsRepo(ABC):
         self.uow = uow
 
     @abstractmethod
-    async def get_permission_by_name(self, permission_name: str):
+    async def get_permission_by_id(self, permission_id: int):
         pass
 
     @abstractmethod
@@ -16,5 +16,5 @@ class PermissionsRepo(ABC):
         pass
 
     @abstractmethod
-    async def update_permission(self, permission_mode, **kwargs) -> str:
+    async def update_permission(self, permission_model, **kwargs) -> str:
         pass

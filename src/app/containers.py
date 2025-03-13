@@ -8,6 +8,9 @@ from app.application.interactors.login.login_interactor import LoginInteractor
 from app.application.interactors.permissions.get_all_perms_interactor import (
     GetAllPermissionsInteractor,
 )
+from app.application.interactors.permissions.update_permission_interactor import (
+    UpdatePermissionInteractor,
+)
 from app.application.interactors.register.register_user_interactor import (
     RegisterUserInteractor,
 )
@@ -129,6 +132,13 @@ class Container(containers.DeclarativeContainer):
         uow=db.uow,
         decode_service=decode_service,
         permissions_repo=permissions_repo,
+    )
+
+    update_permissions_interactor = providers.Factory(
+        UpdatePermissionInteractor,
+        uow=db.uow,
+        permission_repo=permissions_repo,
+        decode_service=decode_service,
     )
 
 

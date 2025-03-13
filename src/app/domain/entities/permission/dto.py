@@ -11,5 +11,4 @@ class PermissionDto:
 
 @dataclass
 class UpdatePermissionDto:
-    permission_name: str
     description: str

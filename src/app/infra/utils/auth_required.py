@@ -11,14 +11,15 @@ jwt_auth = JWTAuthService(redis_cl=redis.Redis)
 
 def auth_required(func):
     @wraps(func)
-    async def wrapper(request: Request, *args, **kwargs):
+    async def wrapper(*args, **kwargs):
+        request: Request = kwargs.get("request")
         token = await get_token(request)
         print(f"Token received in wrapper: {token} (type: {type(token)})")
 
         auth_service = container.auth.auth_service()
         await auth_service.validate_token(token)
 
-        return await func(request, *args, **kwargs)
+        return await func(*args, **kwargs)
 
     return wrapper
 

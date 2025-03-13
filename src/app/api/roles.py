@@ -26,9 +26,10 @@ async def gel_all_roles(
     return await roles_interactor.get_all_roles(extracted_token)
 
 
-@router.patch("/update-role")
+@router.patch("/update-role/{role_id}")
 @auth_required
 async def update_role(
+    role_id: int,
     request: Request,
     schema: UpdateRoleSchema,
     roles_interactor: UpdateRoleInteractor = Depends(
@@ -40,6 +41,6 @@ async def update_role(
 
     update_dto = UpdateRoleRTO(schema.role_name, schema.description, schema.permissions)
 
-    result = await roles_interactor.execute(extracted_token, update_dto)
+    result = await roles_interactor.execute(role_id, extracted_token, update_dto)
 
     return Response(f"Role updated: {result}", status_code=200)

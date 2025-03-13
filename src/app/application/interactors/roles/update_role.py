@@ -20,11 +20,11 @@ class UpdateRoleInteractor(UpdateRoleUseCase):
         self.role_repo = role_repo
         self.decode_service = decode_service
 
-    async def execute(self, token: str, dto: UpdateRoleRTO) -> str:
+    async def execute(self, role_id: int, token: str, dto: UpdateRoleRTO) -> str:
         is_admin = await self.decode_service.check_is_admin(token)
 
         if is_admin == "admin":
-            existing_role = await self.role_repo.get_by_name(dto.role_name)
+            existing_role = await self.role_repo.get_role_by_id(role_id)
 
             if not existing_role:
                 raise RoleNotFound(f"Role '{dto.role_name}' not found")

@@ -13,12 +13,10 @@ class RoleRepoImpl(RoleRepo):
     def __init__(self, uow: IUnitOfWork):
         super().__init__(uow)
 
-    async def get_by_name(self, role_name: str) -> Optional[Role]:
+    async def get_role_by_id(self, role_id: int) -> Optional[Role]:
         async with self.uow(auto_commit=True):
             session_ = self.uow.session
-            result = await session_.execute(
-                select(Role).filter(Role.role_name == role_name)
-            )
+            result = await session_.execute(select(Role).filter(Role.id == role_id))
             role_model = result.scalars().first()
 
             if not role_model:

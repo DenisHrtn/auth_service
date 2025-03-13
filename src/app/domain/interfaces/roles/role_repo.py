@@ -10,7 +10,7 @@ class RoleRepo(ABC):
         self.uow = uow
 
     @abstractmethod
-    async def get_by_name(self, role_name: str) -> Optional[Role]:
+    async def get_role_by_id(self, role_id: int) -> Optional[Role]:
         pass
 
     @abstractmethod
