@@ -28,6 +28,10 @@ class UserRepo(ABC):
         pass
 
     @abstractmethod
+    async def get_user_by_code(self, code: int) -> User:
+        pass
+
+    @abstractmethod
     async def update_user(self, user_model, **kwargs) -> None:
         pass
 

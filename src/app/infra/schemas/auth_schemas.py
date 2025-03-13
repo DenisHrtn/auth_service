@@ -21,6 +21,16 @@ class LoginRequestSchema(BaseModel):
     password: str
 
 
+class ResetPasswordSchema(BaseModel):
+    email: str
+
+
+class ChangePasswordSchema(BaseModel):
+    code: int
+    password: str
+    password_again: str
+
+
 class TokenResponseSchema(BaseModel):
     access_token: str
     refresh_token: str

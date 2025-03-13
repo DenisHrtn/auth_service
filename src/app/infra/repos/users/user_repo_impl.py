@@ -67,6 +67,20 @@ class UserRepoImpl(UserRepo):
 
             return user_model
 
+    async def get_user_by_code(self, code: int) -> Optional[UserModel]:
+        async with self.uow(auto_commit=True):
+            session_ = self.uow.session
+            result = await session_.execute(
+                select(UserModel).filter(UserModel.code == code)
+            )
+
+            user_model = result.scalars().first()
+
+            if not user_model:
+                return None
+
+            return user_model
+
     async def update_user(self, user_model: UserModel, **kwargs):
         async with self.uow(auto_commit=True) as unit:
             session_ = unit.session

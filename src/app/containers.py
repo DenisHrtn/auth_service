@@ -1,6 +1,9 @@
 import redis
 from dependency_injector import containers, providers
 
+from app.application.interactors.change_password.change_password_interactor import (
+    ChangePasswordInteractor,
+)
 from app.application.interactors.confirm_register.confirm_register_interactor import (
     ConfirmRegistrationInteractor,
 )
@@ -13,6 +16,9 @@ from app.application.interactors.permissions.update_permission_interactor import
 )
 from app.application.interactors.register.register_user_interactor import (
     RegisterUserInteractor,
+)
+from app.application.interactors.reset_password.reset_password_interactor import (
+    ResetPasswordInteractor,
 )
 from app.application.interactors.roles.gel_all_roles_interactor import (
     GetAllRolesInteractor,
@@ -139,6 +145,21 @@ class Container(containers.DeclarativeContainer):
         uow=db.uow,
         permission_repo=permissions_repo,
         decode_service=decode_service,
+    )
+
+    reset_password_interactor = providers.Factory(
+        ResetPasswordInteractor,
+        uow=db.uow,
+        user_repo=user_repo,
+        email_sender=email_sender,
+        code_service=code_service,
+    )
+
+    change_password_interactor = providers.Factory(
+        ChangePasswordInteractor,
+        uow=db.uow,
+        user_repo=user_repo,
+        password_hasher=password_hasher,
     )
 
 
