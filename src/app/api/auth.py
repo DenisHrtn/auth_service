@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 
 from app.application.interactors.change_password.change_password_interactor import (
     ChangePasswordInteractor,
@@ -7,6 +7,7 @@ from app.application.interactors.confirm_register.confirm_register_interactor im
     ConfirmRegistrationInteractor,
 )
 from app.application.interactors.login.login_interactor import LoginInteractor
+from app.application.interactors.logout.logout_interactor import LogoutInteractor
 from app.application.interactors.register.register_user_interactor import (
     RegisterUserInteractor,
 )
@@ -29,6 +30,7 @@ from app.infra.schemas.auth_schemas import (
     ResetPasswordSchema,
     SendCodeAgainRequestSchema,
 )
+from app.infra.utils.auth_required import auth_required
 
 router = APIRouter(tags=["auth"])
 
@@ -114,5 +116,21 @@ async def change_password(
     )
 
     result = await change_password_interactor.execute(change_pass_dto)
+
+    return result
+
+
+@router.post("/logout")
+@auth_required
+async def logout(
+    request: Request,
+    logout_interactor: LogoutInteractor = Depends(
+        lambda: container.logout_interactor()
+    ),
+):
+    token = request.headers.get("Authorization")
+    extracted_token = token.split(" ")[1]
+
+    result = await logout_interactor.logout(extracted_token)
 
     return result

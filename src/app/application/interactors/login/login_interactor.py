@@ -1,7 +1,7 @@
 from app.application.interfaces.login.dto import AuthTokenDTO, VerifyPasswordDTO
 from app.application.interfaces.login.login_interface import ILoginInterface
 from app.application.interfaces.unit_of_work.sql_base import IUnitOfWork
-from app.application.use_cases.login import LoginUseCase
+from app.application.use_cases.login.login import LoginUseCase
 from app.domain.interfaces.auth.auth_interface import IAuthInterface
 from app.domain.interfaces.users.user_repo import UserRepo
 

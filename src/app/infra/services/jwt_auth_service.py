@@ -60,6 +60,6 @@ class JWTAuthService(IAuthInterface):
 
         return payload
 
-    async def deactivate_token(self, token: str) -> None:
-        await self.redis_cl.delete(f"token:{token}")
+    def deactivate_token(self, token: str) -> None:
+        self.redis_cl.delete(f"token:{token}")
         logger.info(f"Токен {token} был успешно удален из Redis!")

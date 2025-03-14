@@ -8,6 +8,7 @@ from app.application.interactors.confirm_register.confirm_register_interactor im
     ConfirmRegistrationInteractor,
 )
 from app.application.interactors.login.login_interactor import LoginInteractor
+from app.application.interactors.logout.logout_interactor import LogoutInteractor
 from app.application.interactors.permissions.get_all_perms_interactor import (
     GetAllPermissionsInteractor,
 )
@@ -187,6 +188,10 @@ class Container(containers.DeclarativeContainer):
 
     get_all_users_interactor = providers.Factory(
         GetAllUsersInteractor, uow=db.uow, user_repo=user_repo
+    )
+
+    logout_interactor = providers.Factory(
+        LogoutInteractor, auth_service=auth.auth_service
     )
 
 
