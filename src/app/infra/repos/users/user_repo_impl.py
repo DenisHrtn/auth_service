@@ -7,7 +7,7 @@ from app.application.use_cases.register.dto import RegisterUserDTO
 from app.application.use_cases.send_code_again.dto import SendCodeAgainOutputDTO
 from app.domain.entities.user.dto import UserDTO
 from app.domain.interfaces.users.user_repo import UserRepo
-from app.infra.repos.sqla.models import Role, UserModel
+from app.infra.repos.sqla.models import Profile, Role, UserModel
 from app.infra.utils.generate_confirm_code import gen_code
 
 
@@ -37,6 +37,11 @@ class UserRepoImpl(UserRepo):
             )
 
             session_.add(role_model)
+            await session_.flush()
+
+            profile_model = Profile(user_id=user_model.id)
+
+            session_.add(profile_model)
             await session_.flush()
 
             user_dto = UserDTO(

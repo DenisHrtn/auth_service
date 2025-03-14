@@ -40,6 +40,40 @@ class UserModel(Base):
         sa.DateTime, nullable=False, default=text("CURRENT_TIMESTAMP")
     )
 
+    profile: Mapped["Profile"] = relationship(
+        "Profile", back_populates="user", uselist=False
+    )
+
+
+class Profile(Base):
+    """
+    Модель профиля
+    """
+
+    __tablename__ = "profiles"
+
+    id: Mapped[int] = mapped_column(sa.Integer, primary_key=True, autoincrement=True)
+
+    first_name: Mapped[str] = mapped_column(sa.String(255), nullable=False, default="")
+
+    last_name: Mapped[str] = mapped_column(sa.String(255), nullable=False, default="")
+
+    info: Mapped[str] = mapped_column(sa.String(255), nullable=False, default="")
+
+    speciality: Mapped[str] = mapped_column(
+        sa.String(255), nullable=False, default="Programmer"
+    )
+
+    days_with_service: Mapped[datetime] = mapped_column(
+        sa.DateTime, nullable=False, server_default=text("CURRENT_TIMESTAMP")
+    )
+
+    user_id: Mapped[int] = mapped_column(
+        sa.Integer, sa.ForeignKey("users.id", ondelete="CASCADE"), unique=True
+    )
+
+    user: Mapped["UserModel"] = relationship("UserModel", back_populates="profile")
+
 
 class Role(Base):
     """

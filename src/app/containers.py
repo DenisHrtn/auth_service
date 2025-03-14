@@ -14,6 +14,12 @@ from app.application.interactors.permissions.get_all_perms_interactor import (
 from app.application.interactors.permissions.update_permission_interactor import (
     UpdatePermissionInteractor,
 )
+from app.application.interactors.profiles.get_all_profiles_interactor import (
+    GetAllProfilesInteractor,
+)
+from app.application.interactors.profiles.update_profiles_interactor import (
+    UpdateProfilesInteractor,
+)
 from app.application.interactors.register.register_user_interactor import (
     RegisterUserInteractor,
 )
@@ -29,6 +35,7 @@ from app.application.interactors.send_code_again.send_code_again_intreractor imp
 )
 from app.config import Config
 from app.infra.repos.permissions.permissions_repo_impl import PermissionsRepoImpl
+from app.infra.repos.profiles.profiles_repo_impl import ProfilesRepoImpl
 from app.infra.repos.roles.role_repo_impl import RoleRepoImpl
 from app.infra.repos.sqla.db import Database
 from app.infra.repos.users.user_repo_impl import UserRepoImpl
@@ -83,6 +90,8 @@ class Container(containers.DeclarativeContainer):
     user_repo = providers.Singleton(UserRepoImpl, uow=db.uow)
 
     role_repo = providers.Singleton(RoleRepoImpl, uow=db.uow)
+
+    profile_repo = providers.Singleton(ProfilesRepoImpl, uow=db.uow)
 
     decode_service = providers.Singleton(DecodeJWTToken)
 
@@ -160,6 +169,19 @@ class Container(containers.DeclarativeContainer):
         uow=db.uow,
         user_repo=user_repo,
         password_hasher=password_hasher,
+    )
+
+    update_profile_interactor = providers.Factory(
+        UpdateProfilesInteractor,
+        uow=db.uow,
+        profile_repo=profile_repo,
+        decode_service=decode_service,
+    )
+
+    get_all_profiles_interactor = providers.Factory(
+        GetAllProfilesInteractor,
+        uow=db.uow,
+        profile_repo=profile_repo,
     )
 
 

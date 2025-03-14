@@ -40,6 +40,7 @@ class JWTAuthService(IAuthInterface):
             payload = jwt.decode(token, AUTH_SECRET_KEY, algorithms=["HS256"])
             logger.info(f"Decoded payload: {payload}")
         except jwt.ExpiredSignatureError:
+            self.deactivate_token(str(token))
             raise HTTPException(status_code=401, detail="Token expired")
         except jwt.InvalidTokenError:
             raise HTTPException(status_code=401, detail="Invalid token")
