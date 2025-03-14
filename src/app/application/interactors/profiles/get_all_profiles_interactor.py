@@ -10,7 +10,7 @@ class GetAllProfilesInteractor(GetAllProfilesWithUsersUseCase):
         self.uow = uow
         self.profile_repo = profile_repo
 
-    async def get_all_profiles_with_users(self):
-        profiles = await self.profile_repo.get_all_profiles()
+    async def get_all_profiles_with_users(self, offset: int, limit: int):
+        profiles = await self.profile_repo.get_all_profiles(offset, limit)
 
         return profiles

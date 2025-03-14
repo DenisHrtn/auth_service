@@ -46,4 +46,4 @@ repos:
           fixme,possibly-used-before-assignment,attribute-defined-outside-init,unnecessary-lambda,raise-missing-from,
           invalid-overridden-method,protected-access,too-many-instance-attributes,arguments-differ,useless-parent-delegation
           invalid-overridden-method,protected-access,too-many-instance-attributes,arguments-differ,invalid-envvar-default,
-          redefined-outer-name,useless-parent-delegation,arguments-renamed'
+          redefined-outer-name,useless-parent-delegation,arguments-renamed,too-many-arguments,too-many-positional-arguments'

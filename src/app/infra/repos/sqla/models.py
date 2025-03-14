@@ -44,6 +44,8 @@ class UserModel(Base):
         "Profile", back_populates="user", uselist=False
     )
 
+    role: Mapped["Role"] = relationship("Role", back_populates="user", uselist=False)
+
 
 class Profile(Base):
     """

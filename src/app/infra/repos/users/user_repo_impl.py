@@ -1,11 +1,12 @@
 from typing import Optional
 
 from sqlalchemy import select
+from sqlalchemy.orm import joinedload
 
 from app.application.interfaces.unit_of_work.sql_base import IUnitOfWork
 from app.application.use_cases.register.dto import RegisterUserDTO
 from app.application.use_cases.send_code_again.dto import SendCodeAgainOutputDTO
-from app.domain.entities.user.dto import UserDTO
+from app.domain.entities.user.dto import UserDTO, map_user_to_dto
 from app.domain.interfaces.users.user_repo import UserRepo
 from app.infra.repos.sqla.models import Profile, Role, UserModel
 from app.infra.utils.generate_confirm_code import gen_code
@@ -85,6 +86,33 @@ class UserRepoImpl(UserRepo):
                 return None
 
             return user_model
+
+    async def get_all_user(
+        self,
+        offset: int,
+        limit: int,
+        is_admin: Optional[bool] = None,
+        order_by: Optional[str] = None,
+    ):
+        async with self.uow(auto_commit=True):
+            session_ = self.uow.session
+
+            query = select(UserModel).options(joinedload(UserModel.role))
+
+            if is_admin is not None:
+                query = query.filter(UserModel.is_admin == is_admin)
+
+            if order_by:
+                match order_by:
+                    case "date_joined":
+                        query = query.order_by(UserModel.date_joined.desc())
+                    case "name":
+                        query = query.order_by(UserModel.username.asc())
+
+            result = await session_.execute(query.offset(offset).limit(limit))
+            users = result.scalars().all()
+
+            return [map_user_to_dto(user) for user in users]
 
     async def update_user(self, user_model: UserModel, **kwargs):
         async with self.uow(auto_commit=True) as unit:

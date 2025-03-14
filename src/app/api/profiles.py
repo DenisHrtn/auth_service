@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Request, Response
+from fastapi import APIRouter, Depends, Query, Request, Response
 
 from app.application.interactors.profiles.get_all_profiles_interactor import (
     GetAllProfilesInteractor,
@@ -42,10 +42,12 @@ async def update_profile(
 @auth_required
 async def get_all_profiles(
     request: Request,
+    offset: int = Query(0, ge=0),
+    limit: int = Query(10, le=100),
     get_profiles_interactor: GetAllProfilesInteractor = Depends(
         lambda: container.get_all_profiles_interactor()
     ),
 ):
-    result = await get_profiles_interactor.get_all_profiles_with_users()
+    result = await get_profiles_interactor.get_all_profiles_with_users(offset, limit)
 
     return result

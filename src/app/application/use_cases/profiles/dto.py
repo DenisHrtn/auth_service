@@ -21,12 +21,22 @@ class ProfileDTO:
     info: str
     speciality: str
     days_with_service: datetime
+
+
+@dataclass
+class ProfileResponse:
+    id: int
+    first_name: str
+    last_name: str
+    info: str
+    speciality: str
+    days_with_service: datetime
     user_id: int
     user: Optional[UserResponseDTO]
 
 
-def map_profile_to_dto(profile) -> ProfileDTO:
-    return ProfileDTO(
+def map_profile_to_dto(profile) -> ProfileResponse:
+    return ProfileResponse(
         id=profile.id,
         first_name=profile.first_name,
         last_name=profile.last_name,

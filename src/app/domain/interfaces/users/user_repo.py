@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from typing import Optional
 
 from app.application.interfaces.unit_of_work.sql_base import IUnitOfWork
 from app.application.use_cases.register.dto import RegisterUserDTO
@@ -29,6 +30,16 @@ class UserRepo(ABC):
 
     @abstractmethod
     async def get_user_by_code(self, code: int) -> User:
+        pass
+
+    @abstractmethod
+    async def get_all_user(
+        self,
+        offset: int,
+        limit: int,
+        is_admin: Optional[bool] = None,
+        order_by: Optional[str] = None,
+    ):
         pass
 
     @abstractmethod

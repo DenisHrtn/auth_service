@@ -33,6 +33,7 @@ from app.application.interactors.roles.update_role import UpdateRoleInteractor
 from app.application.interactors.send_code_again.send_code_again_intreractor import (
     SendCodeAgainInteractor,
 )
+from app.application.interactors.users.get_all_users import GetAllUsersInteractor
 from app.config import Config
 from app.infra.repos.permissions.permissions_repo_impl import PermissionsRepoImpl
 from app.infra.repos.profiles.profiles_repo_impl import ProfilesRepoImpl
@@ -182,6 +183,10 @@ class Container(containers.DeclarativeContainer):
         GetAllProfilesInteractor,
         uow=db.uow,
         profile_repo=profile_repo,
+    )
+
+    get_all_users_interactor = providers.Factory(
+        GetAllUsersInteractor, uow=db.uow, user_repo=user_repo
     )
 
 

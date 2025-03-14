@@ -31,12 +31,15 @@ class ProfilesRepoImpl(ProfilesRepo):
 
             return profile_model
 
-    async def get_all_profiles(self) -> list:
+    async def get_all_profiles(self, offset: int = 0, limit: int = 10) -> list:
         async with self.uow(auto_commit=True):
             session_ = self.uow.session
 
             result = await session_.execute(
-                select(Profile).options(joinedload(Profile.user))
+                select(Profile)
+                .options(joinedload(Profile.user))
+                .offset(offset)
+                .limit(limit)
             )
 
             profiles = result.scalars().all()

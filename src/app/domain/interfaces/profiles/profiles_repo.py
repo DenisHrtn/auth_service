@@ -12,7 +12,7 @@ class ProfilesRepo(ABC):
         pass
 
     @abstractmethod
-    async def get_all_profiles(self):
+    async def get_all_profiles(self, offset: int, limit: int):
         pass
 
     @abstractmethod
