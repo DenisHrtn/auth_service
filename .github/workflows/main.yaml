@@ -1,0 +1,45 @@
+name: Linter check
+
+on:
+  push:
+    branches:
+      - "*"
+  pull_request:
+    branches:
+      - "*"
+
+permissions:
+  contents: write
+
+jobs:
+  linter:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: "3.11"
+
+      - name: Install Poetry
+        run: |
+          curl -sSL https://install.python-poetry.org | python3 -
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+      - name: Install dependencies
+        run: |
+          cd src
+          poetry install --no-root
+
+      - name: Install pre-commit hooks
+        run: |
+          cd src
+          poetry run pre-commit install --install-hooks
+
+      - name: Run pre-commit hooks
+        run: |
+          cd src
+          poetry run pre-commit run --all-files
